@@ -1,0 +1,15 @@
+{
+  "name": "b13/picture",
+  "type": "typo3-cms-extension",
+  "description": "Improved TYPO3 image ViewHelper creating picture elements with support for sizes, sources, additional image formats, etc.",
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "picture"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "B13\\Picture\\": "Classes/"
+    }
+  }
+}

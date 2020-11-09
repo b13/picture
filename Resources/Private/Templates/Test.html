@@ -1,0 +1,188 @@
+<html
+	xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	xmlns:i="http://typo3.org/ns/B13/Picture/ViewHelpers"
+	data-namespace-typo3-fluid="true"
+>
+
+<h1>Test page for b13 Image ViewHelper</h1>
+
+
+<h2>Image Tags</h2>
+
+<h3>Simple Image</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" alt="Testimage 400px width" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" alt="Testimage 400px width" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+<h3>Simple Image as webp</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" fileExtension="webp" alt="Testimage 400px width" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" fileExtension="webp" alt="Testimage 400px width" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<h3>Simple Image with Retina option</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" useRetina="1" alt="Testimage 400px with retina option" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" useRetina="1" alt="Testimage 400px width with retina option" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<h3>Simple Image with addWebp option</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" alt="Testimage 400px width with webp" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" alt="Testimage 400px width with addWebp option" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+<h3>Simple Image with Retina and addWebp option</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" useRetina="1" alt="Testimage 400px with retina option" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" useRetina="1" alt="Testimage 400px width with retina and addWebp option " /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<h2>Image with multiple sizes</h2>
+
+<h3>Image with 2 sizes</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" sources="{0: {width: 800, media: 'min-width: 1024px'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size for screens > 1024px" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" sources="{0: {width: 800, media: 'min-width: 1024px'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size for screens > 1024px" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<h3>Image with 2 sizes and retina option</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" useRetina="1" sources="{0: {width: 800, media: 'min-width: 1024px'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size for screens > 1024px, with retina" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" useRetina="1" sources="{0: {width: 800, media: 'min-width: 1024px'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size for screens > 1024px, with retina" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<h3>Single image with multiple image sizes and two breakpoints as srcset (should render as a picture tag)</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" sources="{0: {width: 400, variants: '310, 345, 400', sizes: '100vh'}}" alt="Testimage with 400px image size, with multiple images as a srcset, including webp image format with fallback" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" sources="{0: {width: 400, variants: '310, 345, 400', sizes: '100vh'}}" alt="Testimage with 400px image size, with multiple images as a srcset, including webp image format with fallback" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+<h3>Single image with multiple image sizes as srcset (should render as an image tag)</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" sizes="(min-width: 400px) 400px, 100vh" width="400" variants="310, 345, 400" alt="Testimage with 400px image size, with multiple images as a srcset, including webp image format with fallback" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" sources="{0: {width: 400, variants: '310, 345, 400', sizes: '100vh'}}" alt="Testimage with 400px image size, with multiple images as a srcset, including webp image format with fallback" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<h3>Image (Picture element) with srcset and a sizes-value, with webP option</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" pictureClass="myPictureClass" sources="{0: {width: '800', media: 'min-width: 1024px', variants: '800, 1200, 1600, 2000', sizes: '100vh'}, 1: {width: 400, variants: '310, 345, 400', sizes: '100vh'}}" alt="Testimage with 400px image size, 800px image size for screens > 1024px, with multiple images as a srcset, including webp image format with fallback" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" pictureClass="myPictureClass" sources="{0: {width: '800', media: 'min-width: 1024px', variants: '800, 1200, 1600, 2000', sizes: '100vh'}, 1: {width: 400, variants: '310, 345, 400', sizes: '100vh'}}" alt="Testimage with 400px image size, 800px image size for screens > 1024px, with multiple images as a srcset, including webp image format with fallback" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<h2>Breakpoint testing</h2>
+
+<h2>Image with 3 sizes for the 3 given breakpoints in TypoScript setup</h2>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" pictureClass="myPictureClass" sources="{lg: {width: 800}, md: {width: 600}, sm: {width: 400}}" alt="Testimage with 3 breakpoints referenced by name" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" pictureClass="myPictureClass" sources="{lg: {width: 800}, md: {width: 600}, sm: {width: 400}}" alt="Testimage with 3 breakpoints referenced by name" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+
+<f:section name="Element">
+	{html -> f:format.raw()}
+
+	<code>{fluid -> f:format.raw()}</code>
+
+	<code>{html}</code>
+</f:section>
+
+
+
+</html>
