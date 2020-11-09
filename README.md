@@ -126,4 +126,4 @@ purposes, not meant for your production environment.
 This extension was created by Andreas Hämmerl and David Steeb in 2019 for b13 GmbH, Stuttgart.
 
 Find more TYPO3 extensions we have developed that help us deliver value in client projects. As part of the way we work,
-we focus on testing and best practises to ensure long-term performance, reliability, and results in all our code.
+we focus on testing and best practices to ensure long-term performance, reliability, and results in all our code.
