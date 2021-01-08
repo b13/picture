@@ -4,6 +4,16 @@
 The b13 image view helper is a massive extension of the regular Fluid image ViewHelper. Basically it processes images
 and renders a single src element or a picture element depending on the specified configuration.
 
+## Installation
+
+Install the extension using composer: `composer req b13/picture`.
+
+Include the TypoScript within your main template: 
+
+```
+@import 'EXT:picture/Configuration/TypoScript/setup.typoscript'
+```
+
 ## Use Fluid Namespace `B13\Picture`
 
 Use a proper configured Fluid template adding the namespace when using this ViewHelper:
@@ -18,7 +28,7 @@ Use a proper configured Fluid template adding the namespace when using this View
 
 ## TypoScript setup
 
-See `EXT:picture/Configuration/TypoScript/setup.typoscript` for possible configuration options (key: `plugin.tx_picture`:
+See `EXT:picture/Configuration/TypoScript/setup.typoscript` for possible configuration options (key: `plugin.tx_picture`):
 
 | TypoScript Configuration option | Description |
 |---------------------------------|-------------|
@@ -79,14 +89,12 @@ Add a CSS class used for the `picture` element (if rendered using `<picture>`).
 ## TypoScript Settings
 
 ### In general
-The following attributes can also be set in TypoScript as defaults for your whole site: `addWebp`, `useRetina`. If the
-given key is specified with any value, the corresponding attributes will be set by the setting. Basically a global
-definition is possible by TypoScript. Those can be overridden for each usage of the view helper by setting the c
-orresponding attribute.
+The following attributes can also be set in TypoScript as defaults for your whole site: `addWebp`, `useRetina`. 
+A default setting can be overridden for each usage of the ViewHelper by setting the corresponding attribute.
 
 ### retina
 The `retina` option enables an extension of the default behaviour of the `useRetina` attribute. If `retina` is set, an
-array should be specified with the multiplier for the image size as key, and the multiplier value output in the 
+array should be specified with the multiplier for the image size as key, and the multiplier value output in the
 corresponding tag.
 
 ```
@@ -125,5 +133,6 @@ purposes, not meant for your production environment.
 
 This extension was created by Andreas Hämmerl and David Steeb in 2019 for b13 GmbH, Stuttgart.
 
-Find more TYPO3 extensions we have developed that help us deliver value in client projects. As part of the way we work,
-we focus on testing and best practices to ensure long-term performance, reliability, and results in all our code.
+[Find more TYPO3 extensions we have developed](https://b13.com/useful-typo3-extensions-from-b13-to-you) that help us
+deliver value in client projects. As part of the way we work, we focus on testing and best practices ensuring long-term
+performance, reliability, and results in all our code. 
