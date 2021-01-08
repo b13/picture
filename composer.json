@@ -12,5 +12,8 @@
     "psr-4": {
       "B13\\Picture\\": "Classes/"
     }
+  },
+  "require-dev": {
+    "typo3/tailor": "^1.1"
   }
 }
