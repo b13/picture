@@ -366,8 +366,6 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      */
     protected function addRetina(): void
     {
-        $retinaProcessingInstructions = $this->processingInstructions;
-
         // 2x is default. Use multiple if retina is set in TypoScript settings.
         $retinaSettings = $this->checks['retinaSettings'] ? $this->settings['retina.'] : [2 => '2x'];
 
@@ -386,6 +384,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
 
         foreach ($retinaSettings as $retinaMultiplyer => $retinaString) {
             // Set processing instructions.
+            $retinaProcessingInstructions = $this->processingInstructions;
+
             if (strpos($retinaProcessingInstructions['width'], 'c') === false) {
                 $retinaProcessingInstructions['width'] = $retinaProcessingInstructions['width'] * $retinaMultiplyer;
             } else {
