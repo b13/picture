@@ -288,14 +288,12 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                     $this->tag->addAttribute('loading', $this->settings['lazyLoading']);
                 }
 
-                $alt = $this->image->getProperty('alternative');
-                $title = $this->image->getProperty('title');
+                $alt = $this->arguments['alt'] ?: $this->image->getProperty('alternative');
+                $title = $this->arguments['title'] ?: $this->image->getProperty('title');
 
                 // The alt-attribute is mandatory to have valid html-code, therefore add it even if it is empty
-                if (empty($this->arguments['alt'])) {
-                    $this->tag->addAttribute('alt', $alt);
-                }
-                if (empty($this->arguments['title']) && $title) {
+                $this->tag->addAttribute('alt', $alt);
+                if (!empty($title)) {
                     $this->tag->addAttribute('title', $title);
                 }
                 break;
