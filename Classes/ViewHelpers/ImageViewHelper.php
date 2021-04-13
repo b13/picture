@@ -148,8 +148,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     public function render(): string
     {
         $this->output = [];
-        $this->evaluateTypoScriptSetup();
         $this->setImageAndProcessingInstructions();
+        $this->evaluateTypoScriptSetup();
 
         // build the image tag
         $this->buildSingleTag('img');
@@ -502,11 +502,13 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $extbaseFrameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
         $this->settings = $extbaseFrameworkConfiguration['plugin.']['tx_picture.'];
 
-        // Set checks needed later on.
-        $this->checks['addWebp'] = (!empty($this->arguments['fileExtension']) && $this->arguments['fileExtension'] === 'webp') ? 0 : ($this->arguments['addWebp'] ?? $this->settings['addWebp'] ?? 0);
-        $this->checks['useRetina'] = $this->arguments['useRetina'] ?? $this->settings['useRetina'] ?? 0;
-        $this->checks['breakpoints'] = isset($this->settings['breakpoints.']) ? 1 : 0;
-        $this->checks['sources'] = isset($this->arguments['sources']) ? 1 : 0;
-        $this->checks['retinaSettings'] = isset($this->settings['retina.']) ? 1 : 0;
+        if ($this->image->getExtension() !== 'svg') {
+            // Set checks needed later on for additional options, not needed if we're dealing with an SVG file
+            $this->checks['addWebp'] = (!empty($this->arguments['fileExtension']) && $this->arguments['fileExtension'] === 'webp') ? 0 : ($this->arguments['addWebp'] ?? $this->settings['addWebp'] ?? 0);
+            $this->checks['useRetina'] = $this->arguments['useRetina'] ?? $this->settings['useRetina'] ?? 0;
+            $this->checks['breakpoints'] = isset($this->settings['breakpoints.']) ? 1 : 0;
+            $this->checks['sources'] = isset($this->arguments['sources']) ? 1 : 0;
+            $this->checks['retinaSettings'] = isset($this->settings['retina.']) ? 1 : 0;
+        }
     }
 }
