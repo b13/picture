@@ -151,15 +151,15 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $this->evaluateTypoScriptSetup();
         $this->setImageAndProcessingInstructions();
 
+        // build the image tag
+        $this->buildSingleTag('img');
+        $imageTag = $this->tag->render();
+
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if (!$this->checks['sources'] && $this->checks['addWebp']) {
             $this->addWebpImage();
             $this->output[] = $this->tag->render();
-            $this->tag->reset();
         }
-
-        $this->buildSingleTag('img');
-        $imageTag = $this->tag->render();
         $this->tag->reset();
 
         // Build source tags by given information from sources attribute.
@@ -349,9 +349,10 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 }
                 break;
             case 'source':
-                $forbiddenAttributes = ['align', 'alt', 'border', 'crossorigin', 'height', 'hspace', 'ismap', 'loading', 'longdesc', 'usemap', 'vscpace', 'width', 'class', 'id', 'src'];
+                // for source we remove all attributes except these three ones
+                $attributesToKeep = ['media', 'sizes', 'type'];
                 foreach ($this->tag->getAttributes() as $attributeName => $value) {
-                    if (in_array($attributeName, $forbiddenAttributes)) {
+                    if (!in_array($attributeName, $attributesToKeep)) {
                         $this->tag->removeAttribute($attributeName);
                     }
                 }
