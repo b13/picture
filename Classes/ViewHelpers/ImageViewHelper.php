@@ -185,7 +185,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = $this->tag->getAttribute('type');
-                if ($type != 'image/webp' && $this->checks['addWebp']) {
+                if ($type !== 'image/webp' && $this->checks['addWebp']) {
                     $this->addWebpImage();
                     array_unshift($singleOutput, $this->tag->render());
                 }
