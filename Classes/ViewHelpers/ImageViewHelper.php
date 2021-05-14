@@ -286,7 +286,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 if (!empty($this->arguments['class'])) {
                     $this->tag->addAttribute('class', $this->arguments['class']);
                 }
-                if (!empty($this->settings['lazyLoading'])) {
+                if (!empty($this->settings['lazyLoading']) && !$this->hasArgument('loading')) {
                     $this->tag->addAttribute('loading', $this->settings['lazyLoading']);
                 }
 
