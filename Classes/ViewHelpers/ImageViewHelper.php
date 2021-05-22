@@ -253,8 +253,9 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 $srcsetValue .= ($srcsetValue ? ', ' : '');
                 $srcsetValue .= $this->imageService->getImageUri($srcsetImage, $this->arguments['absolute']) . ' ' . $srcsetWidth . 'w';
             }
-            // set the default processed image (we might need the width and height of this image later on)
+            // set the default processed image (we might need the width and height of this image later on) and generate a single image uri as the src fallback
             $processedImage = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
+            $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
         } else {
             // generate a single image uri as the src
             $processedImage = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
@@ -274,6 +275,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 }
                 if ($srcsetValue) {
                     $this->tag->addAttribute('srcset', $srcsetValue);
+                    $this->tag->addAttribute('src', $imageUri);
                 } else {
                     $this->tag->addAttribute('src', $imageUri);
                 }
