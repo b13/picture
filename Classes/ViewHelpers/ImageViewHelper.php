@@ -255,12 +255,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
             // set the default processed image (we might need the width and height of this image later on) and generate a single image uri as the src fallback
             $processedImage = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
-            $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
         } else {
             // generate a single image uri as the src
             $processedImage = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
-            $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
         }
+        $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
 
 
         $sourceTagRendered = false;
@@ -275,10 +274,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 }
                 if ($srcsetValue) {
                     $this->tag->addAttribute('srcset', $srcsetValue);
-                    $this->tag->addAttribute('src', $imageUri);
-                } else {
-                    $this->tag->addAttribute('src', $imageUri);
                 }
+                $this->tag->addAttribute('src', $imageUri);
                 if (!empty($this->arguments['sizes'])) {
                     $this->tag->addAttribute('sizes', $this->arguments['sizes']);
                 }
