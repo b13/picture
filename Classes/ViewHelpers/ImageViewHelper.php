@@ -370,8 +370,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $retinaSettings = $this->checks['retinaSettings'] ? $this->settings['retina.'] : [2 => '2x'];
 
         // Process regular image.
-        $processedImageRegular = $this->getImageService()->applyProcessingInstructions($this->image, $this->processingInstructions);
-        $imageUriRegular = $this->getImageService()->getImageUri($processedImageRegular, $this->arguments['absolute']);
+        $processedImageRegular = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
+        $imageUriRegular = $this->imageService->getImageUri($processedImageRegular, $this->arguments['absolute']);
 
         // Process additional retina images. Tag value can be gathered for source tags from srcset value as there it
         // was to be set already because adding retina is not mandatory.
@@ -400,8 +400,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
 
             // Process image with new settings.
-            $processedImageRetina = $this->getImageService()->applyProcessingInstructions($this->image, $retinaProcessingInstructions);
-            $imageUriRetina = $this->getImageService()->getImageUri($processedImageRetina, $this->arguments['absolute']);
+            $processedImageRetina = $this->imageService->applyProcessingInstructions($this->image, $retinaProcessingInstructions);
+            $imageUriRetina = $this->imageService->getImageUri($processedImageRetina, $this->arguments['absolute']);
 
             // Add string for tag.
             $tagValue .= ', ' . $imageUriRetina . ' ' . $retinaString;
@@ -454,7 +454,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
         }
 
-        $this->image = $this->getImageService()->getImage($this->arguments['src'], $this->arguments['image'],
+        $this->image = $this->imageService->getImage($this->arguments['src'], $this->arguments['image'],
             $this->arguments['treatIdAsReference']);
         $cropString = $this->arguments['crop'];
         if ($cropString === null && $this->image->hasProperty('crop') && $this->image->getProperty('crop')) {
