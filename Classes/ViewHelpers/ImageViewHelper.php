@@ -272,7 +272,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                         $this->tag->addAttribute('data-focus-area', $focusArea->makeAbsoluteBasedOnFile($this->image));
                     }
                 }
-                if ($srcsetValue) {
+                if ($srcsetValue ?? false) {
                     $this->tag->addAttribute('srcset', $srcsetValue);
                 }
                 $this->tag->addAttribute('src', $imageUri);
@@ -302,7 +302,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             case 'source':
 
                 // Add content of src attribute to srcset attribute as the source element has no src attribute.
-                if ($srcsetValue) {
+                if ($srcsetValue ?? false) {
                     $this->tag->addAttribute('srcset', $srcsetValue);
                 } else {
                     $this->tag->addAttribute('srcset', $imageUri);
