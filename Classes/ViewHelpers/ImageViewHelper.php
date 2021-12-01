@@ -11,6 +11,9 @@ namespace B13\Picture\ViewHelpers;
  */
 
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
+use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\FileInterface;
+use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 use TYPO3\CMS\Core\Resource\FileReference;
@@ -52,7 +55,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     /**
      * The image.
      *
-     * @var FileReference
+     * @var File|FileInterface|FileReference
      */
     protected $image = null;
 
@@ -111,6 +114,12 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             'addWebp',
             'string',
             'Specifies if a picture element with an additional webp image should be rendered.'
+        );
+
+        $this->registerArgument(
+            'lossless',
+            'string',
+            'Specifies whether webp images should use lossless compression'
         );
 
         $this->registerArgument(
@@ -249,15 +258,15 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                     'fileExtension' => $this->processingInstructions['fileExtension'],
                     'crop' => $this->processingInstructions['crop']
                 ];
-                $srcsetImage = $this->imageService->applyProcessingInstructions($this->image, $srcsetProcessingInstructions);
+                $srcsetImage = $this->applyProcessingInstructions($this->image, $srcsetProcessingInstructions);
                 $srcsetValue .= ($srcsetValue ? ', ' : '');
                 $srcsetValue .= $this->imageService->getImageUri($srcsetImage, $this->arguments['absolute']) . ' ' . $srcsetWidth . 'w';
             }
             // set the default processed image (we might need the width and height of this image later on) and generate a single image uri as the src fallback
-            $processedImage = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
+            $processedImage = $this->applyProcessingInstructions($this->image, $this->processingInstructions);
         } else {
             // generate a single image uri as the src
-            $processedImage = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
+            $processedImage = $this->applyProcessingInstructions($this->image, $this->processingInstructions);
         }
         $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
 
@@ -370,7 +379,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $retinaSettings = $this->checks['retinaSettings'] ? $this->settings['retina.'] : [2 => '2x'];
 
         // Process regular image.
-        $processedImageRegular = $this->imageService->applyProcessingInstructions($this->image, $this->processingInstructions);
+        $processedImageRegular = $this->applyProcessingInstructions($this->image, $this->processingInstructions);
         $imageUriRegular = $this->imageService->getImageUri($processedImageRegular, $this->arguments['absolute']);
 
         // Process additional retina images. Tag value can be gathered for source tags from srcset value as there it
@@ -400,7 +409,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
 
             // Process image with new settings.
-            $processedImageRetina = $this->imageService->applyProcessingInstructions($this->image, $retinaProcessingInstructions);
+            $processedImageRetina = $this->applyProcessingInstructions($this->image, $retinaProcessingInstructions);
             $imageUriRetina = $this->imageService->getImageUri($processedImageRetina, $this->arguments['absolute']);
 
             // Add string for tag.
@@ -505,9 +514,31 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             // Set checks needed later on for additional options, not needed if we're dealing with an SVG file
             $this->checks['addWebp'] = (!empty($this->arguments['fileExtension']) && $this->arguments['fileExtension'] === 'webp') ? 0 : ($this->arguments['addWebp'] ?? $this->settings['addWebp'] ?? 0);
             $this->checks['useRetina'] = $this->arguments['useRetina'] ?? $this->settings['useRetina'] ?? 0;
+            $this->checks['lossless'] = $this->arguments['lossless'] ?? $this->settings['lossless'] ?? 0;
             $this->checks['breakpoints'] = isset($this->settings['breakpoints.']) ? 1 : 0;
             $this->checks['sources'] = isset($this->arguments['sources']) ? 1 : 0;
             $this->checks['retinaSettings'] = isset($this->settings['retina.']) ? 1 : 0;
         }
+    }
+
+    /**
+     * Wrapper for creating a processed file. In case the target file extension
+     * is webp, the source is not and lossless compression is enabled for webp,
+     * add the corresponding encoding option to the processing instructions.
+     *
+     * @param File|FileInterface|FileReference $image
+     * @param array $processingInstructions
+     * @return ProcessedFile
+     */
+    public function applyProcessingInstructions($image, array $processingInstructions): ProcessedFile
+    {
+        if (($processingInstructions['fileExtension'] ?? '') === 'webp'
+            && $this->checks['lossless']
+            && $image->getExtension() !== 'webp'
+        ) {
+            $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
+        }
+
+        return $this->imageService->applyProcessingInstructions($image, $processingInstructions);
     }
 }
