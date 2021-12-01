@@ -6,7 +6,7 @@ plugin.tx_picture {
   useRetina = 0
 
   # Default for using lossless compression for webp.
-  lossless = 1
+  lossless = 0
 
   # Works only in combination with useRetina = 1.
   # The key must be the multiplier of the image size and the value the multiplier string added in the srcset
