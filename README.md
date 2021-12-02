@@ -34,6 +34,7 @@ See `EXT:picture/Configuration/TypoScript/setup.typoscript` for possible configu
 |---------------------------------|-------------|
 | addWebp | Add webp alternative image files as sources. <br>_default: 0_ |
 | useRetina | Add retina (2x) version of all images as sizes variants. <br>_default: 0_ |
+| lossless | Enable lossless compression for webp images. <br>_default: 0_ |
 | retina | Use custom or multiple multipliers for calculating retina image variants. <br>_default: <br>retina.2 = 2x<br>Only works in combination with `useRetina = 1` |
 | breakpoints | Use named breakpoints for easier markup of different image sizes for one picture element.<br>_default: empty_. |
 | lazyLoading | Use the `loading` attribute with images. See [Browser Native Lazy Loading by Default](https://b13.com/blog/lazy-loading-just-got-lazier-in-typo3-v10)<br>_default: {$types.content.image.lazyLoading}_ |
@@ -56,6 +57,10 @@ attribute `srcset` is extended by a 2x retina version of the image.
 Adds rendering of additional images in webp format. If it is specified without a given sources attribute, it renders a
 picture tag instead of a single img tag in order to maintain a browser fallback. If it is specified together with
 `sources` it adds an additional `source` tag above any `source` tag rendered by a given `sources` element.
+
+### lossless
+Enable lossless compression for webp images. If you find your webp images lacking in quality compared to jpg/png images, enable
+this option to overwrite default settings for ImageMagick/GraphicsMagick. 
 
 ### variants and sizes
 Adds multiple variants of an image with different image sizes, optionally add a sizes-attribute to image tags:
