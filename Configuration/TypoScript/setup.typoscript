@@ -5,6 +5,9 @@ plugin.tx_picture {
   # Default for adding retina images.
   useRetina = 0
 
+  # Default for using lossless compression for webp.
+  lossless = 0
+
   # Works only in combination with useRetina = 1.
   # The key must be the multiplier of the image size and the value the multiplier string added in the srcset
   # attribute's value. E.g. add "3 = 3x" to array:
