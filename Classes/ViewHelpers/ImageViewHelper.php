@@ -165,7 +165,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $imageTag = $this->tag->render();
 
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
-        if (!$this->checks['sources'] && $this->checks['addWebp']) {
+        if (!($this->checks['sources'] ?? false) && ($this->checks['addWebp'] ?? false)) {
             $this->addWebpImage();
             $this->output[] = $this->tag->render();
         }
@@ -174,11 +174,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         // Build source tags by given information from sources attribute.
         $defaultArguments = $this->arguments;
         $defaultProcessingInstructions = $this->processingInstructions;
-        if ($this->checks['sources']) {
+        if (is_array($this->checks['sources'] ?? false)) {
             $this->renderPictureElement = true;
             foreach ($this->arguments['sources'] as $sourceType => $sourceAttributes) {
                 // At first check if given type exists in TypoScript settings and use the given media query.
-                if ($this->checks['breakpoints']) {
+                if (is_array($this->checks['breakpoints'] ?? false)) {
                     foreach ($this->settings['breakpoints.'] as $breakpointName => $breakpointValue) {
                         if ($breakpointName === $sourceType) {
                             $sourceAttributes['media'] = '(min-width: ' . $breakpointValue . 'px)';
@@ -194,7 +194,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = $this->tag->getAttribute('type');
-                if ($type !== 'image/webp' && $this->checks['addWebp']) {
+                if ($type !== 'image/webp' && ($this->checks['addWebp'] ?? false)) {
                     $this->addWebpImage();
                     array_unshift($singleOutput, $this->tag->render());
                 }
@@ -209,7 +209,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 }
             }
             // add a webp fallback for the default/non-sources image if addWebp is set
-            if ($this->checks['addWebp']) {
+            if ($this->checks['addWebp'] ?? false) {
                 $this->addWebpImage();
                 $this->output[] = $this->tag->render();
             }
@@ -235,11 +235,12 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $this->removeForbiddenAttributes($tag);
 
         // generate a srcset containing a list of images if that is what we need
+        $srcsetValue = '';
         if (!empty($this->arguments['variants'])) {
-            $variants = explode(",", $this->arguments['variants']);
+            $variants = explode(',', $this->arguments['variants']);
             sort($variants);
             // determine the ratio
-            if ($this->arguments['width'] && $this->arguments['height']) {
+            if (!empty($this->arguments['width']) && !empty($this->arguments['height'])) {
                 $width = preg_replace("/[^0-9]/", "", $this->arguments['width']);
                 $height = preg_replace("/[^0-9]/", "", $this->arguments['height']);
                 $ratio = $width/$height;
@@ -271,7 +272,6 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
 
 
-        $sourceTagRendered = false;
         switch ($tag) {
             case 'img':
 
@@ -332,11 +332,9 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 if (!empty($this->arguments['type'])) {
                     $this->tag->addAttribute('type', $this->arguments['type']);
                 }
-
-                $sourceTagRendered = true;
         }
 
-        if ($this->checks['useRetina']) {
+        if ($this->checks['useRetina'] ?? false) {
             $this->addRetina();
         }
 
@@ -376,7 +374,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     protected function addRetina(): void
     {
         // 2x is default. Use multiple if retina is set in TypoScript settings.
-        $retinaSettings = $this->checks['retinaSettings'] ? $this->settings['retina.'] : [2 => '2x'];
+        $retinaSettings = !empty($this->checks['retinaSettings']) ? $this->settings['retina.'] : [2 => '2x'];
 
         // Process regular image.
         $processedImageRegular = $this->applyProcessingInstructions($this->image, $this->processingInstructions);
@@ -395,17 +393,21 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             // Set processing instructions.
             $retinaProcessingInstructions = $this->processingInstructions;
 
-            if (strpos($retinaProcessingInstructions['width'], 'c') === false) {
-                $retinaProcessingInstructions['width'] = $retinaProcessingInstructions['width'] * $retinaMultiplyer;
-            } else {
-                $retinaProcessingInstructions['width'] = $retinaProcessingInstructions['width'] * $retinaMultiplyer;
-                $retinaProcessingInstructions['width'] .= 'c';
+            if (isset($retinaProcessingInstructions['width'])) {
+                if (strpos($retinaProcessingInstructions['width'], 'c') === false) {
+                    $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
+                } else {
+                    $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
+                    $retinaProcessingInstructions['width'] .= 'c';
+                }
             }
-            if (strpos($retinaProcessingInstructions['height'], 'c') === false) {
-                $retinaProcessingInstructions['height'] = $retinaProcessingInstructions['height'] * $retinaMultiplyer;
-            } else {
-                $retinaProcessingInstructions['height'] = $retinaProcessingInstructions['height'] * $retinaMultiplyer;
-                $retinaProcessingInstructions['height'] .= 'c';
+            if (isset($retinaProcessingInstructions['height'])) {
+                if (strpos($retinaProcessingInstructions['height'], 'c') === false) {
+                    $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;
+                } else {
+                    $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;
+                    $retinaProcessingInstructions['height'] .= 'c';
+                }
             }
 
             // Process image with new settings.
@@ -436,7 +438,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      */
     protected function wrapWithPictureElement(): void
     {
-        if ($this->arguments['pictureClass']) {
+        if ($this->arguments['pictureClass'] ?? false) {
             array_unshift($this->output, '<picture class="' . $this->arguments['pictureClass'] . '">');
         } else {
             array_unshift($this->output, '<picture>');
@@ -480,7 +482,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             'minHeight' => $this->arguments['minHeight'],
             'maxWidth' => $this->arguments['maxWidth'],
             'maxHeight' => $this->arguments['maxHeight'],
-            'fileExtension' => $this->arguments['fileExtension'] ? $this->arguments['fileExtension'] : null,
+            'fileExtension' => $this->arguments['fileExtension'] ?: null,
             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($this->image),
         ];
     }
@@ -533,7 +535,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     public function applyProcessingInstructions($image, array $processingInstructions): ProcessedFile
     {
         if (($processingInstructions['fileExtension'] ?? '') === 'webp'
-            && $this->checks['lossless']
+            && ($this->checks['lossless'] ?? false)
             && $image->getExtension() !== 'webp'
         ) {
             $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
