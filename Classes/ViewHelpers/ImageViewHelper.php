@@ -174,11 +174,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         // Build source tags by given information from sources attribute.
         $defaultArguments = $this->arguments;
         $defaultProcessingInstructions = $this->processingInstructions;
-        if (is_array($this->checks['sources'] ?? false)) {
+        if ($this->checks['sources'] ?? false) {
             $this->renderPictureElement = true;
             foreach ($this->arguments['sources'] as $sourceType => $sourceAttributes) {
                 // At first check if given type exists in TypoScript settings and use the given media query.
-                if (is_array($this->checks['breakpoints'] ?? false)) {
+                if ($this->checks['breakpoints'] ?? false) {
                     foreach ($this->settings['breakpoints.'] as $breakpointName => $breakpointValue) {
                         if ($breakpointName === $sourceType) {
                             $sourceAttributes['media'] = '(min-width: ' . $breakpointValue . 'px)';
@@ -374,7 +374,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     protected function addRetina(): void
     {
         // 2x is default. Use multiple if retina is set in TypoScript settings.
-        $retinaSettings = !empty($this->checks['retinaSettings']) ? $this->settings['retina.'] : [2 => '2x'];
+        $retinaSettings = ($this->checks['retinaSettings'] ?? false) ? $this->settings['retina.'] : [2 => '2x'];
 
         // Process regular image.
         $processedImageRegular = $this->applyProcessingInstructions($this->image, $this->processingInstructions);
