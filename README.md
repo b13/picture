@@ -77,13 +77,13 @@ specify additional TypoScript settings, any key can be used.
 ```
 sources="{
     0: {
-        width: '200c', height: '200c', media: 'min-width: 300px', cropVariant: 'teaser'
+        width: '300c', height: '300c', media: 'min-width: 1000px', cropVariant: 'desktop', variants: '400, 600, 800', sizes: '100vw'
     },
     1: {
         width: '250c', height: '250c', media: 'min-width: 600px', src: alternativefile.uid, treatIdAsReference: 1
     },
     2: {
-        width: '300c', height: '300c', media: 'min-width: 1000px', cropVariant: 'desktop', variants: '400, 600, 800', sizes: '100vw'
+        width: '200c', height: '200c', media: 'min-width: 300px', cropVariant: 'teaser'
     }
 }"
 ```
