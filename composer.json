@@ -8,6 +8,9 @@
       "extension-key": "picture"
     }
   },
+  "require": {
+    "typo3/cms-fluid": "^9.5 || ^10.4 || ^11.5"
+  },
   "autoload": {
     "psr-4": {
       "B13\\Picture\\": "Classes/"
