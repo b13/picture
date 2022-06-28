@@ -1,2 +1,9 @@
+/.Build/
+/Build/phpunit/.phpunit.result.cache
+/Build/testing-docker/.env
+/.php-cs-fixer.cache
+/.idea
 /composer.lock
 /vendor/
+/Tests/Functional/ViewHelpers/Fixtures/fileadmin/_processed_/*
+!/Tests/Functional/ViewHelpers/Fixtures/fileadmin/_processed_/.gitdummy
