@@ -256,9 +256,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                     'minHeight' => NULL,
                     'maxWidth' => NULL,
                     'maxHeight' => NULL,
-                    'fileExtension' => $this->processingInstructions['fileExtension'],
                     'crop' => $this->processingInstructions['crop']
                 ];
+                if (!empty($this->processingInstructions['fileExtension'] ?? '')) {
+                    $srcsetProcessingInstructions['fileExtension'] = $this->processingInstructions['fileExtension'];
+                }
                 $srcsetImage = $this->applyProcessingInstructions($this->image, $srcsetProcessingInstructions);
                 $srcsetValue .= ($srcsetValue ? ', ' : '');
                 $srcsetValue .= $this->imageService->getImageUri($srcsetImage, $this->arguments['absolute']) . ' ' . $srcsetWidth . 'w';
@@ -430,7 +432,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $this->renderPictureElement = true;
         $this->buildSingleTag('source');
         $this->tag->addAttribute('type', 'image/webp');
-        $this->processingInstructions['fileExtension'] = $this->arguments['fileExtension'];
+        if (!empty($this->arguments['fileExtension'] ?? '')) {
+            $this->processingInstructions['fileExtension'] = $this->arguments['fileExtension'];
+        } else {
+            unset($this->processingInstructions['fileExtension']);
+        }
     }
 
     /**
@@ -454,10 +460,6 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      */
     protected function setImageAndProcessingInstructions(array $arguments = []): void
     {
-        if (!empty($this->arguments['fileExtension'])) {
-            $this->processingInstructions['fileExtension'] = $this->arguments['fileExtension'];
-        }
-
         // Replace current arguments with given from sources argument if passed.
         if (!empty($arguments)) {
             foreach ($arguments as $argumentName => $argumentValue) {
@@ -482,9 +484,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             'minHeight' => $this->arguments['minHeight'],
             'maxWidth' => $this->arguments['maxWidth'],
             'maxHeight' => $this->arguments['maxHeight'],
-            'fileExtension' => $this->arguments['fileExtension'] ?: null,
             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($this->image),
         ];
+        if (!empty($this->arguments['fileExtension'] ?? '')) {
+            $this->processingInstructions['fileExtension'] = $this->arguments['fileExtension'];
+        }
     }
 
     /**
