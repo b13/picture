@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace B13\Picture\ViewHelpers;
 
 /*
@@ -11,15 +13,16 @@ namespace B13\Picture\ViewHelpers;
  */
 
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileInterface;
+use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
-use TYPO3\CMS\Core\Resource\FileReference;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
 class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
 {
@@ -43,7 +46,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      *
      * @var CropVariantCollection
      */
-    protected $cropVariantCollection = null;
+    protected $cropVariantCollection;
 
     /**
      * The crop variant.
@@ -57,7 +60,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      *
      * @var File|FileInterface|FileReference
      */
-    protected $image = null;
+    protected $image;
 
     /**
      * The processing instructions.
@@ -95,8 +98,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-
-        if (version_compare(TYPO3_branch, '10.3', '<')) {
+        $typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
+        if (version_compare($typo3Version->getVersion(), '10.3', '<')) {
             $this->registerArgument(
                 'fileExtension',
                 'string',
@@ -145,7 +148,6 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             'array',
             'Array for rendering of multiple images.'
         );
-
     }
 
     /**
@@ -157,6 +159,9 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     public function render(): string
     {
         $this->output = [];
+        if (isset($this->arguments['src'])) {
+            $this->arguments['src'] = (string)$this->arguments['src'];
+        }
         $this->setImageAndProcessingInstructions();
         $this->evaluateTypoScriptSetup();
 
@@ -237,26 +242,27 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         // generate a srcset containing a list of images if that is what we need
         $srcsetValue = '';
         if (!empty($this->arguments['variants'])) {
-            $variants = explode(',', $this->arguments['variants']);
+            $ratio = null;
+            $variants = GeneralUtility::intExplode(',', $this->arguments['variants']);
             sort($variants);
             // determine the ratio
             if (!empty($this->arguments['width']) && !empty($this->arguments['height'])) {
-                $width = preg_replace("/[^0-9]/", "", $this->arguments['width']);
-                $height = preg_replace("/[^0-9]/", "", $this->arguments['height']);
+                $width = (int)preg_replace('/[^0-9]/', '', $this->arguments['width']);
+                $height = (int)preg_replace('/[^0-9]/', '', $this->arguments['height']);
                 $ratio = $width/$height;
             }
             foreach ($variants as $variant) {
                 // build processing instructions for each srcset variant
                 $srcsetWidth = $variant;
-                $srcsetHeight = ($ratio ? $variant * (1/$ratio) : NULL);
+                $srcsetHeight = ($ratio ? $variant * (1/$ratio) : null);
                 $srcsetProcessingInstructions = [
                     'width' => $srcsetWidth,
                     'height' => $srcsetHeight,
-                    'minWidth' => NULL,
-                    'minHeight' => NULL,
-                    'maxWidth' => NULL,
-                    'maxHeight' => NULL,
-                    'crop' => $this->processingInstructions['crop']
+                    'minWidth' => null,
+                    'minHeight' => null,
+                    'maxWidth' => null,
+                    'maxHeight' => null,
+                    'crop' => $this->processingInstructions['crop'],
                 ];
                 if (!empty($this->processingInstructions['fileExtension'] ?? '')) {
                     $srcsetProcessingInstructions['fileExtension'] = $this->processingInstructions['fileExtension'];
@@ -273,14 +279,13 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         }
         $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
 
-
         switch ($tag) {
             case 'img':
 
                 if (!$this->tag->hasAttribute('data-focus-area')) {
                     $focusArea = $this->cropVariantCollection->getFocusArea($this->cropVariant);
                     if (!$focusArea->isEmpty()) {
-                        $this->tag->addAttribute('data-focus-area', $focusArea->makeAbsoluteBasedOnFile($this->image));
+                        $this->tag->addAttribute('data-focus-area', (string)$focusArea->makeAbsoluteBasedOnFile($this->image));
                     }
                 }
                 if ($srcsetValue ?? false) {
@@ -339,7 +344,6 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         if ($this->checks['useRetina'] ?? false) {
             $this->addRetina();
         }
-
     }
 
     /**
@@ -467,8 +471,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
         }
 
-        $this->image = $this->imageService->getImage($this->arguments['src'], $this->arguments['image'],
-            $this->arguments['treatIdAsReference']);
+        $this->image = $this->imageService->getImage(
+            $this->arguments['src'],
+            $this->arguments['image'],
+            $this->arguments['treatIdAsReference']
+        );
         $cropString = $this->arguments['crop'];
         if ($cropString === null && $this->image->hasProperty('crop') && $this->image->getProperty('crop')) {
             $cropString = $this->image->getProperty('crop');
@@ -514,7 +521,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $configurationManager = $objectManager->get(ConfigurationManager::class);
         $extbaseFrameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-        $this->settings = $extbaseFrameworkConfiguration['plugin.']['tx_picture.'];
+        if (isset($extbaseFrameworkConfiguration['plugin.']) && isset($extbaseFrameworkConfiguration['plugin.']['tx_picture.'])) {
+            $this->settings = $extbaseFrameworkConfiguration['plugin.']['tx_picture.'];
+        } else {
+            $this->settings = [];
+        }
 
         if ($this->image->getExtension() !== 'svg') {
             // Set checks needed later on for additional options, not needed if we're dealing with an SVG file
