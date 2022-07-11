@@ -84,8 +84,13 @@ services:
         php -v | grep '^PHP';
         if [ ${TYPO3} -eq 10 ]; then
           composer install --no-progress --no-interaction;
+          if [ $PHP_VERSION = '7.4' ]; then
+            composer require friendsofphp/php-cs-fixer:3.8.0 --dev --no-progress --no-interaction
+          else
+            composer require friendsofphp/php-cs-fixer:3.4.0 --dev --no-progress --no-interaction
+          fi
         else
-          composer remove typo3/cms* --dev --no-progress --no-interaction && composer require typo3/cms-install:^11.5 typo3/cms-fluid-styled-content:^11.5 --dev -W --no-progress --no-interaction
+          composer remove typo3/cms* --dev --no-progress --no-interaction && composer require friendsofphp/php-cs-fixer:3.8.0 typo3/cms-install:^11.5 typo3/cms-fluid-styled-content:^11.5 --dev -W --no-progress --no-interaction
         fi
       "
 
