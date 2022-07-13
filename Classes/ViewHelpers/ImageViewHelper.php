@@ -400,7 +400,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             $retinaProcessingInstructions = $this->processingInstructions;
 
             if (isset($retinaProcessingInstructions['width'])) {
-                if (strpos($retinaProcessingInstructions['width'], 'c') === false) {
+                if (strpos((string)$retinaProcessingInstructions['width'], 'c') === false) {
                     $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
                 } else {
                     $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
@@ -408,7 +408,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 }
             }
             if (isset($retinaProcessingInstructions['height'])) {
-                if (strpos($retinaProcessingInstructions['height'], 'c') === false) {
+                if (strpos((string)$retinaProcessingInstructions['height'], 'c') === false) {
                     $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;
                 } else {
                     $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;
@@ -474,7 +474,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $this->image = $this->imageService->getImage(
             $this->arguments['src'],
             $this->arguments['image'],
-            $this->arguments['treatIdAsReference']
+            (bool)$this->arguments['treatIdAsReference']
         );
         $cropString = $this->arguments['crop'];
         if ($cropString === null && $this->image->hasProperty('crop') && $this->image->getProperty('crop')) {
