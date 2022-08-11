@@ -401,7 +401,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             
             // upscale all dimensions settings
             foreach (['width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight'] as $property) {
-                if ($retinaProcessingInstructions[$property]) {
+                if (isset($retinaProcessingInstructions[$property])) {
                     $retinaProcessingInstructions[$property] = (int)$retinaProcessingInstructions[$property] * $retinaMultiplyer;
                     if ($property === 'height' || $property === 'width') {
                         $retinaProcessingInstructions[$property] .= 'c';
