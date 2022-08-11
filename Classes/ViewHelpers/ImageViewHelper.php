@@ -399,20 +399,13 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             // Set processing instructions.
             $retinaProcessingInstructions = $this->processingInstructions;
 
-            if (isset($retinaProcessingInstructions['width'])) {
-                if (!str_contains((string)$retinaProcessingInstructions['width'], 'c')) {
-                    $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
-                } else {
-                    $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
-                    $retinaProcessingInstructions['width'] .= 'c';
-                }
-            }
-            if (isset($retinaProcessingInstructions['height'])) {
-                if (!str_contains((string)$retinaProcessingInstructions['height'], 'c')) {
-                    $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;
-                } else {
-                    $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;
-                    $retinaProcessingInstructions['height'] .= 'c';
+            // upscale all dimensions settings
+            foreach (['width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight'] as $property) {
+                if (isset($retinaProcessingInstructions[$property])) {
+                    $retinaProcessingInstructions[$property] = (int)$retinaProcessingInstructions[$property] * $retinaMultiplyer;
+                    if ($property === 'height' || $property === 'width') {
+                        $retinaProcessingInstructions[$property] .= 'c';
+                    }
                 }
             }
 
