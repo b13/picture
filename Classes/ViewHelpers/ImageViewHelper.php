@@ -398,7 +398,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         foreach ($retinaSettings as $retinaMultiplyer => $retinaString) {
             // Set processing instructions.
             $retinaProcessingInstructions = $this->processingInstructions;
-            
+
             // upscale all dimensions settings
             foreach (['width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight'] as $property) {
                 if (isset($retinaProcessingInstructions[$property])) {
