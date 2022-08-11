@@ -400,7 +400,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             $retinaProcessingInstructions = $this->processingInstructions;
 
             if (isset($retinaProcessingInstructions['width'])) {
-                if (strpos((string)$retinaProcessingInstructions['width'], 'c') === false) {
+                if (!str_contains((string)$retinaProcessingInstructions['width'], 'c')) {
                     $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
                 } else {
                     $retinaProcessingInstructions['width'] = (int)($retinaProcessingInstructions['width']) * $retinaMultiplyer;
@@ -408,7 +408,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 }
             }
             if (isset($retinaProcessingInstructions['height'])) {
-                if (strpos((string)$retinaProcessingInstructions['height'], 'c') === false) {
+                if (!str_contains((string)$retinaProcessingInstructions['height'], 'c')) {
                     $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;
                 } else {
                     $retinaProcessingInstructions['height'] = (int)($retinaProcessingInstructions['height']) * $retinaMultiplyer;

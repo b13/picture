@@ -45,8 +45,8 @@ class ImageViewHelperTest extends FunctionalTestCase
         $content = $view->render();
         $this->assertProcessedFileExists(150, 150);
         $this->assertProcessedFileExists(1680, 1000);
-        self::assertTrue(strpos(trim($content), '<picture><source srcset=') === 0);
-        self::assertTrue(strpos(trim($content), '<img src=') !== false);
+        self::assertTrue(str_starts_with(trim($content), '<picture><source srcset='));
+        self::assertTrue(str_contains(trim($content), '<img src='));
     }
 
     /**
@@ -60,8 +60,8 @@ class ImageViewHelperTest extends FunctionalTestCase
         $view->setTemplatePathAndFilename($template);
         $content = $view->render();
         $this->assertProcessedFileExists(200, 100);
-        self::assertTrue(strpos(trim($content), '<picture>') === false);
-        self::assertTrue(strpos(trim($content), '<img src=') === 0);
+        self::assertTrue(!str_contains(trim($content), '<picture>'));
+        self::assertTrue(str_starts_with(trim($content), '<img src='));
     }
 
     protected function assertProcessedFileExists(int $width, int $height): void
