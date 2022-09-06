@@ -19,9 +19,7 @@ use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
 class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
@@ -82,15 +80,6 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      * @var array
      */
     protected $checks = [];
-
-    /**
-     * ImageViewHelper constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->tag = GeneralUtility::makeInstance(TagBuilder::class, 'img');
-    }
 
     /**
      * Function to initialize the needed arguments.
@@ -249,12 +238,12 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             if (!empty($this->arguments['width']) && !empty($this->arguments['height'])) {
                 $width = (int)preg_replace('/[^0-9]/', '', $this->arguments['width']);
                 $height = (int)preg_replace('/[^0-9]/', '', $this->arguments['height']);
-                $ratio = $width/$height;
+                $ratio = $width / $height;
             }
             foreach ($variants as $variant) {
                 // build processing instructions for each srcset variant
                 $srcsetWidth = $variant;
-                $srcsetHeight = ($ratio ? $variant * (1/$ratio) : null);
+                $srcsetHeight = ($ratio ? $variant * (1 / $ratio) : null);
                 $srcsetProcessingInstructions = [
                     'width' => $srcsetWidth,
                     'height' => $srcsetHeight,
@@ -508,18 +497,14 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     /**
      * Function to get the TypoScript setup configuration and evaluate.
      */
-    public function evaluateTypoScriptSetup(): void
+    protected function evaluateTypoScriptSetup(): void
     {
-        // Get TypoScript configuration.
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $configurationManager = $objectManager->get(ConfigurationManager::class);
-        $extbaseFrameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-        if (isset($extbaseFrameworkConfiguration['plugin.']) && isset($extbaseFrameworkConfiguration['plugin.']['tx_picture.'])) {
-            $this->settings = $extbaseFrameworkConfiguration['plugin.']['tx_picture.'];
+        $frontendController = $this->getFrontendController();
+        if ($frontendController instanceof TypoScriptFrontendController) {
+            $this->settings = $frontendController->tmpl->setup['plugin.']['tx_picture.'] ?? [];
         } else {
             $this->settings = [];
         }
-
         if ($this->image->getExtension() !== 'svg') {
             // Set checks needed later on for additional options, not needed if we're dealing with an SVG file
             $this->checks['addWebp'] = (!empty($this->arguments['fileExtension']) && $this->arguments['fileExtension'] === 'webp') ? 0 : ($this->arguments['addWebp'] ?? $this->settings['addWebp'] ?? 0);
@@ -531,6 +516,14 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         }
     }
 
+    protected function getFrontendController(): ?TypoScriptFrontendController
+    {
+        if (($GLOBALS['TSFE'] ?? null) instanceof TypoScriptFrontendController) {
+            return $GLOBALS['TSFE'];
+        }
+        return null;
+    }
+
     /**
      * Wrapper for creating a processed file. In case the target file extension
      * is webp, the source is not and lossless compression is enabled for webp,
@@ -540,7 +533,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      * @param array $processingInstructions
      * @return ProcessedFile
      */
-    public function applyProcessingInstructions($image, array $processingInstructions): ProcessedFile
+    protected function applyProcessingInstructions($image, array $processingInstructions): ProcessedFile
     {
         if (($processingInstructions['fileExtension'] ?? '') === 'webp'
             && ($this->checks['lossless'] ?? false)
