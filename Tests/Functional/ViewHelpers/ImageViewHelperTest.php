@@ -81,7 +81,7 @@ class ImageViewHelperTest extends FunctionalTestCase
             )
             ->execute()
             ->fetchAssociative();
-        self::assertTrue($row !== false, 'row with widht: ' . $width . ' and height: ' . $height . ' not found');
+        self::assertTrue($row !== false, 'row with width: ' . $width . ' and height: ' . $height . ' not found');
         $filePath = GeneralUtility::getFileAbsFileName($this->fileadmin . $row['identifier']);
         self::assertTrue(is_file($filePath), $filePath . 'not extist');
         $info = GeneralUtility::makeInstance(ImageInfo::class, $filePath);
