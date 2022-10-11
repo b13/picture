@@ -536,10 +536,13 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     protected function applyProcessingInstructions($image, array $processingInstructions): ProcessedFile
     {
         if (($processingInstructions['fileExtension'] ?? '') === 'webp'
-            && ($this->checks['lossless'] ?? false)
             && $image->getExtension() !== 'webp'
         ) {
-            $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
+            if ($this->checks['lossless'] ?? false) {
+                $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
+            } else {
+                $processingInstructions['additionalParameters'] = '-quality 85';
+            }
         }
 
         return $this->imageService->applyProcessingInstructions($image, $processingInstructions);
