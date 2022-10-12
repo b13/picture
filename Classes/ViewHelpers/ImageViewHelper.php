@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
@@ -536,10 +537,14 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     protected function applyProcessingInstructions($image, array $processingInstructions): ProcessedFile
     {
         if (($processingInstructions['fileExtension'] ?? '') === 'webp'
-            && ($this->checks['lossless'] ?? false)
             && $image->getExtension() !== 'webp'
         ) {
-            $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
+            if ($this->checks['lossless'] ?? false) {
+                $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
+            } else {
+                $jpegQuality = MathUtility::forceIntegerInRange($GLOBALS['TYPO3_CONF_VARS']['GFX']['jpg_quality'], 10, 100, 85);
+                $processingInstructions['additionalParameters'] = '-quality ' . $jpegQuality;
+            }
         }
 
         return $this->imageService->applyProcessingInstructions($image, $processingInstructions);
