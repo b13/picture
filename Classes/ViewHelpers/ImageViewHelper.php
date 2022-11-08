@@ -246,8 +246,8 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 $srcsetWidth = $variant;
                 $srcsetHeight = ($ratio ? $variant * (1 / $ratio) : null);
                 $srcsetProcessingInstructions = [
-                    'width' => $srcsetWidth,
-                    'height' => $srcsetHeight,
+                    'width' => $srcsetWidth . (strpos((string)$this->arguments['width'], 'c') ? 'c' : ''),
+                    'height' => $srcsetHeight . (strpos((string)$this->arguments['height'], 'c') ? 'c' : ''),
                     'minWidth' => null,
                     'minHeight' => null,
                     'maxWidth' => null,
