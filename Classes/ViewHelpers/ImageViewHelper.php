@@ -160,7 +160,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $imageTag = $this->tag->render();
 
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
-        if (!($this->checks['sources'] ?? false) && ($this->checks['addWebp'] ?? false)) {
+        if (!($this->checks['sources'] ?? false) && ($this->checks['addWebp'] ?? false) && ($this->image->getExtension() !== 'svg')) {
             $this->addWebpImage();
             $this->output[] = $this->tag->render();
         }
@@ -169,7 +169,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         // Build source tags by given information from sources attribute.
         $defaultArguments = $this->arguments;
         $defaultProcessingInstructions = $this->processingInstructions;
-        if ($this->checks['sources'] ?? false) {
+        if (($this->checks['sources'] ?? false) && ($this->image->getExtension() !== 'svg')) {
             $this->renderPictureElement = true;
             foreach ($this->arguments['sources'] as $sourceType => $sourceAttributes) {
                 // At first check if given type exists in TypoScript settings and use the given media query.
@@ -369,6 +369,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      */
     protected function addRetina(): void
     {
+        // do not add retina versions for svg files
+        if ($this->image->getExtension() === 'svg') {
+            return;
+        }
+
         // 2x is default. Use multiple if retina is set in TypoScript settings.
         $retinaSettings = ($this->checks['retinaSettings'] ?? false) ? $this->settings['retina.'] : [2 => '2x'];
 
