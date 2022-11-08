@@ -169,7 +169,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         // Build source tags by given information from sources attribute.
         $defaultArguments = $this->arguments;
         $defaultProcessingInstructions = $this->processingInstructions;
-        if ($this->checks['sources'] ?? false) {
+        if (($this->checks['sources'] ?? false) && ($this->image->getExtension() !== 'svg')) {
             $this->renderPictureElement = true;
             foreach ($this->arguments['sources'] as $sourceType => $sourceAttributes) {
                 // At first check if given type exists in TypoScript settings and use the given media query.
