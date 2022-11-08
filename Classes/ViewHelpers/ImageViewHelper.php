@@ -369,6 +369,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      */
     protected function addRetina(): void
     {
+        // do not add retina versions for svg files
+        if ($this->image->getExtension() === 'svg') {
+            return;
+        }
+
         // 2x is default. Use multiple if retina is set in TypoScript settings.
         $retinaSettings = ($this->checks['retinaSettings'] ?? false) ? $this->settings['retina.'] : [2 => '2x'];
 
@@ -415,6 +420,12 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      */
     protected function addWebpImage(): void
     {
+        // do not add webp versions for svg files
+        if ($this->image->getExtension() === 'svg') {
+            unset($this->processingInstructions['fileExtension']);
+            return;
+        }
+
         $this->processingInstructions['fileExtension'] = 'webp';
         $this->renderPictureElement = true;
         $this->buildSingleTag('source');
