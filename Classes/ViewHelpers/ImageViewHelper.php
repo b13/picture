@@ -159,7 +159,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         $this->buildSingleTag('img');
         $imageTag = $this->tag->render();
 
-        // Add a webp source tag and activate nesting within a picture element only if no sources are set.   
+        // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if (!($this->checks['sources'] ?? false) && ($this->checks['addWebp'] ?? false) && ($this->image->getExtension() !== 'svg')) {
             $this->addWebpImage();
             $this->output[] = $this->tag->render();
