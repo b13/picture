@@ -12,25 +12,17 @@ namespace B13\Picture\Tests\Functional\Frontend;
  * of the License, or any later version.
  */
 
+use B13\Picture\Tests\Functional\Functional\AbstractFrontendTest;
 use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-class ImageViewHelperTest extends FunctionalTestCase
+class ImageViewHelperTest extends AbstractFrontendTest
 {
-    protected $pathsToLinkInTestInstance = [
-        'typo3conf/ext/picture/Build/sites' => 'typo3conf/sites',
-    ];
-
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/picture',
-    ];
-
     /**
      * @test
      */
     public function callingPageReturns200ResponseCode(): void
     {
-        $this->importDataSet(ORIGINAL_ROOT . 'typo3conf/ext/picture/Tests/Functional/Frontend/Fixtures/demonstration_page.xml');
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/demonstration_page.csv');
         $this->setUpFrontendRootPage(
             1,
             [

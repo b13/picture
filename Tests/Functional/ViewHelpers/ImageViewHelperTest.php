@@ -20,10 +20,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 class ImageViewHelperTest extends FunctionalTestCase
 {
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/picture',
-    ];
-
+    protected $testExtensionsToLoad = ['typo3conf/ext/picture'];
     protected $fileadmin = 'EXT:picture/Tests/Functional/ViewHelpers/Fixtures/fileadmin';
 
     public function setUp(): void
@@ -38,8 +35,8 @@ class ImageViewHelperTest extends FunctionalTestCase
      */
     public function imageWithSources(): void
     {
-        $this->importDataSet(ORIGINAL_ROOT . 'typo3conf/ext/picture/Tests/Functional/ViewHelpers/Fixtures/storage_with_file.xml');
-        $template = ORIGINAL_ROOT . 'typo3conf/ext/picture/Tests/Functional/ViewHelpers/Fixtures/ImageWithSources.html';
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
+        $template = __DIR__ . '/Fixtures/ImageWithSources.html';
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename($template);
         $content = $view->render();
@@ -54,8 +51,8 @@ class ImageViewHelperTest extends FunctionalTestCase
      */
     public function simpleImage(): void
     {
-        $this->importDataSet(ORIGINAL_ROOT . 'typo3conf/ext/picture/Tests/Functional/ViewHelpers/Fixtures/storage_with_file.xml');
-        $template = ORIGINAL_ROOT . 'typo3conf/ext/picture/Tests/Functional/ViewHelpers/Fixtures/SimpleImage.html';
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
+        $template = __DIR__ . '/Fixtures/SimpleImage.html';
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename($template);
         $content = $view->render();
