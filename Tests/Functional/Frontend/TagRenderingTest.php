@@ -149,6 +149,24 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp
     /**
      * @test
      */
+    public function singleImageWithMultipleImageSizesAsSrcset(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/single_image_with_multiple_image_sizes_as_srcset.csv');
+        $response = $this->executeFrontendRequestWrapper(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        $expected = '<img
+alt="Testimage with 400px image size, with multiple images as a srcset, including webp image format with fallback" 
+srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_37ef2fbec7.png 310w, /typo3temp/assets/_processed_/a/2/csm_Picture_ffcad8bfb4.png 345w, /typo3temp/assets/_processed_/a/2/csm_Picture_cd33d19e9a.png 400w" 
+src="/typo3temp/assets/_processed_/a/2/csm_Picture_0d0101f0a6.png" 
+sizes="(min-width: 400px) 400px, 100vh" 
+width="400" height="200" loading="lazy" />';
+        $expected = implode(' ', GeneralUtility::trimExplode("\n", $expected));
+        self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
+    }
+
+    /**
+     * @test
+     */
     public function imageWithSrcsetAndASizesValueWithWebpOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_srcset_and_a_sizes_value_with_webp_option.csv');
