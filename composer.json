@@ -12,7 +12,8 @@
     }
   },
   "require": {
-    "typo3/cms-fluid": "^9.5 || ^10.4 || ^11.5"
+    "php": "^7.4 || ~8.0",
+    "typo3/cms-fluid": "^10.4 || ^11.5"
   },
   "autoload": {
     "psr-4": {
