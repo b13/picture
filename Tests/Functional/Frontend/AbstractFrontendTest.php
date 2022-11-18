@@ -19,8 +19,8 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 abstract class AbstractFrontendTest extends FunctionalTestCase
 {
-    protected $pathsToLinkInTestInstance = ['typo3conf/ext/picture/Build/sites' => 'typo3conf/sites'];
-    protected $testExtensionsToLoad = ['typo3conf/ext/picture'];
+    protected array $pathsToLinkInTestInstance = ['typo3conf/ext/picture/Build/sites' => 'typo3conf/sites'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/picture'];
 
     protected function executeFrontendRequestWrapper(InternalRequest $request, InternalRequestContext $context = null, bool $followRedirects = false): ResponseInterface
     {

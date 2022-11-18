@@ -18,23 +18,54 @@ use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
-class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
+class ImageViewHelper extends AbstractTagBasedViewHelper
 {
     protected PictureConfiguration $pictureConfiguration;
+    protected ImageService $imageService;
 
     // the standard image without any processing
     protected FileInterface $image;
 
-    /**
-     * Function to initialize the needed arguments.
-     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->imageService = GeneralUtility::makeInstance(ImageService::class);
+    }
+
     public function initializeArguments(): void
     {
         parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+        // attributes from fluid VH
+        $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', false);
+        $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead', false);
+        $this->registerTagAttribute('longdesc', 'string', 'Specifies the URL to a document that contains a long description of an image', false);
+        $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map', false);
+        $this->registerTagAttribute('loading', 'string', 'Native lazy-loading for images property. Can be "lazy", "eager" or "auto"', false);
+        $this->registerTagAttribute('decoding', 'string', 'Provides an image decoding hint to the browser. Can be "sync", "async" or "auto"', false);
+
+        $this->registerArgument('src', 'string', 'a path to a file, a combined FAL identifier or an uid (int). If $treatIdAsReference is set, the integer is considered the uid of the sys_file_reference record. If you already got a FAL object, consider using the $image parameter instead', false, '');
+        $this->registerArgument('treatIdAsReference', 'bool', 'given src argument is a sys_file_reference record', false, false);
+        $this->registerArgument('image', 'object', 'a FAL object (\\TYPO3\\CMS\\Core\\Resource\\File or \\TYPO3\\CMS\\Core\\Resource\\FileReference)');
+        $this->registerArgument('crop', 'string|bool', 'overrule cropping of image (setting to FALSE disables the cropping set in FileReference)');
+        $this->registerArgument('cropVariant', 'string', 'select a cropping variant, in case multiple croppings have been specified or stored in FileReference', false, 'default');
+        $this->registerArgument('fileExtension', 'string', 'Custom file extension to use');
+
+        $this->registerArgument('width', 'string', 'width of the image. This can be a numeric value representing the fixed width of the image in pixels. But you can also perform simple calculations by adding "m" or "c" to the value. See imgResource.width for possible options.');
+        $this->registerArgument('height', 'string', 'height of the image. This can be a numeric value representing the fixed height of the image in pixels. But you can also perform simple calculations by adding "m" or "c" to the value. See imgResource.width for possible options.');
+        $this->registerArgument('minWidth', 'int', 'minimum width of the image');
+        $this->registerArgument('minHeight', 'int', 'minimum height of the image');
+        $this->registerArgument('maxWidth', 'int', 'maximum width of the image');
+        $this->registerArgument('maxHeight', 'int', 'maximum height of the image');
+        $this->registerArgument('absolute', 'bool', 'Force absolute URL', false, false);
+
+        // picture attributes
         $this->registerArgument(
             'useRetina',
             'bool',
@@ -214,7 +245,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                         $tag->addAttribute('data-focus-area', (string)$focusArea->makeAbsoluteBasedOnFile($this->image));
                     }
                 }
-                if ($srcsetValue ?? false) {
+                if ($srcsetValue !== '') {
                     $tag->addAttribute('srcset', $srcsetValue);
                 }
                 $tag->addAttribute('src', $imageUri);
@@ -244,7 +275,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             case 'source':
 
                 // Add content of src attribute to srcset attribute as the source element has no src attribute.
-                if ($srcsetValue ?? false) {
+                if ($srcsetValue !== '') {
                     $tag->addAttribute('srcset', $srcsetValue);
                 } else {
                     $tag->addAttribute('srcset', $imageUri);
