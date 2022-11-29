@@ -20,14 +20,14 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 class ImageViewHelperTest extends FunctionalTestCase
 {
-    protected $testExtensionsToLoad = ['typo3conf/ext/picture'];
-    protected $fileadmin = 'EXT:picture/Tests/Functional/ViewHelpers/Fixtures/fileadmin';
+    protected array $testExtensionsToLoad = ['typo3conf/ext/picture'];
+    protected string $fileadmin = 'EXT:picture/Tests/Functional/ViewHelpers/Fixtures/fileadmin';
 
     public function setUp(): void
     {
         parent::setUp();
-        $backendUser = $this->setUpBackendUserFromFixture(1);
-        $GLOBALS['BE_USER'] = $backendUser;
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/be_users.csv');
+        $GLOBALS['BE_USER'] = $this->setUpBackendUser(1);
     }
 
     /**

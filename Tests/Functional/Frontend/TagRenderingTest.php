@@ -18,8 +18,8 @@ use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
 
 class TagRenderingTest extends AbstractFrontendTest
 {
-    protected $pathsToLinkInTestInstance = ['typo3conf/ext/picture/Build/sites' => 'typo3conf/sites'];
-    protected $testExtensionsToLoad = ['typo3conf/ext/picture'];
+    protected array $pathsToLinkInTestInstance = ['typo3conf/ext/picture/Build/sites' => 'typo3conf/sites'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/picture'];
 
     /**
      * @test
