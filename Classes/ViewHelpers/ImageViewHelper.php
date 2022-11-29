@@ -14,9 +14,7 @@ namespace B13\Picture\ViewHelpers;
 
 use B13\Picture\Domain\Model\PictureConfiguration;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
-use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileInterface;
-use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -27,6 +25,9 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
 {
     protected PictureConfiguration $pictureConfiguration;
+
+    // the standard image without any processing
+    protected FileInterface $image;
 
     /**
      * Function to initialize the needed arguments.
@@ -94,17 +95,21 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             $this->arguments['src'] = (string)$this->arguments['src'];
         }
 
-        $image = $this->getImage($this->arguments);
+        $this->image = $this->imageService->getImage(
+            $this->arguments['src'],
+            $this->arguments['image'],
+            (bool)$this->arguments['treatIdAsReference']
+        );
         $settings = $this->getTypoScriptSettings();
-        $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $image);
+        $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $this->image);
 
         // build the image tag
-        $tag = $this->buildSingleTag('img', $image, $this->arguments);
+        $tag = $this->buildSingleTag('img', $this->arguments);
         $imageTag = $tag->render();
 
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if ($this->pictureConfiguration->webpShouldBeAddedBeforeSrcset()) {
-            $tag = $this->addWebpImage($image, $this->arguments);
+            $tag = $this->addWebpImage($this->arguments);
             $output[] = $tag->render();
         }
 
@@ -112,14 +117,13 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         if ($this->pictureConfiguration->sourcesShouldBeAdded()) {
             foreach ($this->pictureConfiguration->getSourceConfiguration() as $sourceConfiguration) {
                 $sourceOutputs = [];
-                $sourceImage = $this->getImage($sourceConfiguration);
-                $tag = $this->buildSingleTag('source', $sourceImage, $sourceConfiguration);
+                $tag = $this->buildSingleTag('source', $sourceConfiguration);
                 $sourceOutputs[] = $tag->render();
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = $tag->getAttribute('type');
                 if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded()) {
-                    $tag = $this->addWebpImage($sourceImage, $sourceConfiguration);
+                    $tag = $this->addWebpImage($sourceConfiguration);
                     array_unshift($sourceOutputs, $tag->render());
                 }
 
@@ -129,7 +133,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
             // add a webp fallback for the default/non-sources image if addWebp is set
             if ($this->pictureConfiguration->webpShouldBeAddedAfterSrcset()) {
-                $tag = $this->addWebpImage($image, $this->arguments);
+                $tag = $this->addWebpImage($this->arguments);
                 $output[] = $tag->render();
             }
         }
@@ -143,12 +147,12 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         return $this->buildOutput($output);
     }
 
-    protected function buildVariantsIfNeeded(FileInterface $image, array $configuration): string
+    protected function buildVariantsIfNeeded(array $configuration): string
     {
         $srcsetValue = '';
         // generate a srcset containing a list of images if that is what we need
         if (!empty($configuration['variants'])) {
-            $processingInstructions = $this->getProcessingInstructions($image, $configuration);
+            $processingInstructions = $this->getProcessingInstructions($configuration);
             $ratio = null;
             $variants = GeneralUtility::intExplode(',', $configuration['variants']);
             sort($variants);
@@ -171,10 +175,10 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                     'maxHeight' => null,
                     'crop' => $processingInstructions['crop'],
                 ];
-                if (!empty($processingInstructions['fileExtension'] ?? '')) {
-                    $srcsetProcessingInstructions['fileExtension'] = $processingInstructions['fileExtension'];
+                if (!empty($configuration['fileExtension'] ?? '')) {
+                    $srcsetProcessingInstructions['fileExtension'] = $configuration['fileExtension'];
                 }
-                $srcsetImage = $this->applyProcessingInstructions($image, $srcsetProcessingInstructions);
+                $srcsetImage = $this->applyProcessingInstructions($srcsetProcessingInstructions);
                 $srcsetValue .= ($srcsetValue ? ', ' : '');
                 $srcsetValue .= $this->imageService->getImageUri($srcsetImage, $this->arguments['absolute']) . ' ' . $srcsetWidth . 'w';
             }
@@ -185,30 +189,29 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     /**
      * Function to build a single image or source tag.
      */
-    protected function buildSingleTag(string $tagName, FileInterface $image, array $configuration): TagBuilder
+    protected function buildSingleTag(string $tagName, array $configuration): TagBuilder
     {
         $tag = clone $this->tag;
         $tag->setTagName($tagName);
         $tag = $this->removeForbiddenAttributes($tag);
         // generate a srcset containing a list of images if that is what we need
-        $srcsetValue = $this->buildVariantsIfNeeded($image, $configuration);
-        $processingInstructions = $this->getProcessingInstructions($image, $configuration);
+        $srcsetValue = $this->buildVariantsIfNeeded($configuration);
+        $processingInstructions = $this->getProcessingInstructions($configuration);
 
         // generate a single image uri as the src
         // or
         // set the default processed image (we might need the width and height of this image later on) and generate a single image uri as the src fallback
-        $processedImage = $this->applyProcessingInstructions($image, $processingInstructions);
+        $processedImage = $this->applyProcessingInstructions($processingInstructions);
         $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
 
         switch ($tagName) {
             case 'img':
 
                 if (!$tag->hasAttribute('data-focus-area')) {
-                    $cropVariantCollection = $this->getCropVariantCollection($image, $configuration);
-
-                    $focusArea = $cropVariantCollection->getFocusArea($this->getCropVariant($configuration));
+                    $cropVariantCollection = $this->getCropVariantCollection();
+                    $focusArea = $cropVariantCollection->getFocusArea($this->getCropVariant());
                     if (!$focusArea->isEmpty()) {
-                        $tag->addAttribute('data-focus-area', (string)$focusArea->makeAbsoluteBasedOnFile($image));
+                        $tag->addAttribute('data-focus-area', (string)$focusArea->makeAbsoluteBasedOnFile($this->image));
                     }
                 }
                 if ($srcsetValue ?? false) {
@@ -221,15 +224,15 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
                 $tag->addAttribute('width', $processedImage->getProperty('width'));
                 $tag->addAttribute('height', $processedImage->getProperty('height'));
 
-                if (!empty($configuration['class'])) {
-                    $tag->addAttribute('class', $configuration['class']);
+                if (!empty($this->arguments['class'] ?? null)) {
+                    $tag->addAttribute('class', $this->arguments['class']);
                 }
                 if ($this->pictureConfiguration->lazyLoadingShouldBeAdded()) {
                     $tag->addAttribute('loading', $this->pictureConfiguration->getLazyLoading());
                 }
 
-                $alt = $configuration['alt'] ?: $image->getProperty('alternative');
-                $title = $configuration['title'] ?: $image->getProperty('title');
+                $alt = $this->arguments['alt'] ?: $this->image->getProperty('alternative');
+                $title = $this->arguments['title'] ?: $this->image->getProperty('title');
 
                 // The alt-attribute is mandatory to have valid html-code, therefore add it even if it is empty
                 $tag->addAttribute('alt', $alt);
@@ -265,7 +268,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         }
 
         if ($this->pictureConfiguration->retinaShouldBeUsed()) {
-            $this->addRetina($image, $processingInstructions, $tag);
+            $this->addRetina($processingInstructions, $tag);
         }
         return $tag;
     }
@@ -300,13 +303,13 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     /**
      * Function to render images for given retina resolutions and add to rendering tag.
      */
-    protected function addRetina(FileInterface $image, array $processingInstructions, TagBuilder $tag): void
+    protected function addRetina(array $processingInstructions, TagBuilder $tag): void
     {
         // 2x is default. Use multiple if retina is set in TypoScript settings.
         $retinaSettings = $this->pictureConfiguration->getRetinaSettings();
 
         // Process regular image.
-        $processedImageRegular = $this->applyProcessingInstructions($image, $processingInstructions);
+        $processedImageRegular = $this->applyProcessingInstructions($processingInstructions);
         $imageUriRegular = $this->imageService->getImageUri($processedImageRegular, $this->arguments['absolute']);
 
         // Process additional retina images. Tag value can be gathered for source tags from srcset value as there it
@@ -333,7 +336,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
 
             // Process image with new settings.
-            $processedImageRetina = $this->applyProcessingInstructions($image, $retinaProcessingInstructions);
+            $processedImageRetina = $this->applyProcessingInstructions($retinaProcessingInstructions);
             $imageUriRetina = $this->imageService->getImageUri($processedImageRetina, $this->arguments['absolute']);
 
             // Add string for tag.
@@ -346,10 +349,10 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
     /**
      * Function to add a webp element nested by a picture element.
      */
-    protected function addWebpImage(FileInterface $image, array $configuration): TagBuilder
+    protected function addWebpImage(array $configuration): TagBuilder
     {
         $configuration['fileExtension'] = 'webp';
-        $tag = $this->buildSingleTag('source', $image, $configuration);
+        $tag = $this->buildSingleTag('source', $configuration);
         $tag->addAttribute('type', 'image/webp');
         return $tag;
     }
@@ -368,20 +371,10 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         return $output;
     }
 
-    protected function getImage(array $configuration): FileInterface
+    protected function getProcessingInstructions(array $configuration): array
     {
-        $image = $this->imageService->getImage(
-            $configuration['src'],
-            $configuration['image'],
-            (bool)$configuration['treatIdAsReference']
-        );
-        return $image;
-    }
-
-    protected function getProcessingInstructions(FileInterface $image, array $configuration): array
-    {
-        $cropVariantCollection = $this->getCropVariantCollection($image, $configuration);
-        $cropVariant = $this->getCropVariant($configuration);
+        $cropVariantCollection = $this->getCropVariantCollection();
+        $cropVariant = $this->getCropVariant();
         $cropArea = $cropVariantCollection->getCropArea($cropVariant);
         $processingInstructions = [
             'width' => $configuration['width'],
@@ -390,7 +383,7 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             'minHeight' => $configuration['minHeight'],
             'maxWidth' => $configuration['maxWidth'],
             'maxHeight' => $configuration['maxHeight'],
-            'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image),
+            'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($this->image),
         ];
         if (!empty($configuration['fileExtension'] ?? '')) {
             $processingInstructions['fileExtension'] = $configuration['fileExtension'];
@@ -398,16 +391,16 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
         return $processingInstructions;
     }
 
-    protected function getCropVariant(array $configuration): string
+    protected function getCropVariant(): string
     {
-        return $configuration['cropVariant'] ?: 'default';
+        return $this->arguments['cropVariant'] ?: 'default';
     }
 
-    protected function getCropVariantCollection(FileInterface $image, array $configuration): CropVariantCollection
+    protected function getCropVariantCollection(): CropVariantCollection
     {
-        $cropString = $configuration['crop'];
-        if ($cropString === null && $image->hasProperty('crop') && $image->getProperty('crop')) {
-            $cropString = $image->getProperty('crop');
+        $cropString = $this->arguments['crop'];
+        if ($cropString === null && $this->image->hasProperty('crop') && $this->image->getProperty('crop')) {
+            $cropString = $this->image->getProperty('crop');
         }
         $cropVariantCollection = CropVariantCollection::create((string)$cropString);
         return $cropVariantCollection;
@@ -447,15 +440,11 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
      * Wrapper for creating a processed file. In case the target file extension
      * is webp, the source is not and lossless compression is enabled for webp,
      * add the corresponding encoding option to the processing instructions.
-     *
-     * @param File|FileInterface|FileReference $image
-     * @param array $processingInstructions
-     * @return ProcessedFile
      */
-    protected function applyProcessingInstructions($image, array $processingInstructions): ProcessedFile
+    protected function applyProcessingInstructions(array $processingInstructions): ProcessedFile
     {
         if (($processingInstructions['fileExtension'] ?? '') === 'webp'
-            && $image->getExtension() !== 'webp'
+            && $this->image->getExtension() !== 'webp'
         ) {
             if ($this->pictureConfiguration->losslessShouldBeUsed()) {
                 $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
@@ -465,6 +454,6 @@ class ImageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\ImageViewHelper
             }
         }
 
-        return $this->imageService->applyProcessingInstructions($image, $processingInstructions);
+        return $this->imageService->applyProcessingInstructions($this->image, $processingInstructions);
     }
 }
