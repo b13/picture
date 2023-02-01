@@ -152,7 +152,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 $sourceOutputs[] = $tag->render();
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
-                $type = $tag->getAttribute('type');
+                $type = htmlspecialchars_decode($tag->getAttribute('type') ?? '');
                 if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded()) {
                     $tag = $this->addWebpImage($sourceConfiguration);
                     array_unshift($sourceOutputs, $tag->render());
@@ -346,7 +346,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         // Process additional retina images. Tag value can be gathered for source tags from srcset value as there it
         // was to be set already because adding retina is not mandatory.
         if ($tag->hasAttribute('srcset')) {
-            $tagValue = $tag->getAttribute('srcset');
+            $tagValue = htmlspecialchars_decode($tag->getAttribute('srcset') ?? '');
             $tag->removeAttribute('srcset');
         } else {
             $tagValue = $imageUriRegular;
