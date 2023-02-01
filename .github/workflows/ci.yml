@@ -43,5 +43,8 @@ jobs:
       - name: phpstan
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s phpstan
 
+      - name: Unit Tests
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s unit
+
       - name: Functional Tests with mariadb
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -t ${{ matrix.TYPO3 }} -s functional
