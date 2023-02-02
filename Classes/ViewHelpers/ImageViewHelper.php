@@ -240,7 +240,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 
                 if (!$tag->hasAttribute('data-focus-area')) {
                     $cropVariantCollection = $this->getCropVariantCollection();
-                    $focusArea = $cropVariantCollection->getFocusArea($this->getCropVariant());
+                    $focusArea = $cropVariantCollection->getFocusArea($this->getImageCropVariant());
                     if (!$focusArea->isEmpty()) {
                         $tag->addAttribute('data-focus-area', (string)$focusArea->makeAbsoluteBasedOnFile($this->image));
                     }
@@ -405,7 +405,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     protected function getProcessingInstructions(array $configuration): array
     {
         $cropVariantCollection = $this->getCropVariantCollection();
-        $cropVariant = $this->getCropVariant();
+        $cropVariant = $configuration['cropVariant'] ?? $this->getImageCropVariant();
         $cropArea = $cropVariantCollection->getCropArea($cropVariant);
         $processingInstructions = [
             'width' => $configuration['width'],
@@ -422,9 +422,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         return $processingInstructions;
     }
 
-    protected function getCropVariant(): string
+    protected function getImageCropVariant(): string
     {
-        return $this->arguments['cropVariant'] ?: 'default';
+        return $this->arguments['cropVariant'] ?? 'default';
     }
 
     protected function getCropVariantCollection(): CropVariantCollection
