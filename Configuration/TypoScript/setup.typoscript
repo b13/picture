@@ -1,12 +1,6 @@
 plugin.tx_picture {
-  # Default for adding of images as webp.
-  addWebp = 0
-
   # Default for adding retina images.
   useRetina = 0
-
-  # Default for using lossless compression for webp.
-  lossless = 0
 
   # Works only in combination with useRetina = 1.
   # The key must be the multiplier of the image size and the value the multiplier string added in the srcset
@@ -16,6 +10,15 @@ plugin.tx_picture {
   retina {
     2 = 2x
   }
+
+  # Default for adding of images as avif.
+  addAvif = 0
+
+  # Default for adding of images as webp.
+  addWebp = 0
+
+  # Default for using lossless compression for webp.
+  lossless = 0
 
   # Breakpoints for media query specified in the sources attribute:
   # breakpoints {

@@ -73,6 +73,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         );
 
         $this->registerArgument(
+            'addAvif',
+            'bool',
+            'Specifies if a picture element with an additional avif image should be rendered.'
+        );
+
+        $this->registerArgument(
             'addWebp',
             'bool',
             'Specifies if a picture element with an additional webp image should be rendered.'
@@ -141,6 +147,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if ($this->pictureConfiguration->webpShouldBeAddedBeforeSrcset()) {
             $tag = $this->addWebpImage($this->arguments);
+            // TODO : ADD ??
             $output[] = $tag->render();
         }
 
@@ -150,9 +157,14 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 $sourceOutputs = [];
                 $tag = $this->buildSingleTag('source', $sourceConfiguration);
                 $sourceOutputs[] = $tag->render();
-
-                // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = $tag->getAttribute('type');
+
+                // Build additional source with type avif if attribute addAvif is set and previously build tag is not type of avif already.
+                if ($type !== 'image/avif' && $this->pictureConfiguration->avifShouldBeAdded()) {
+                    $tag = $this->addAvifImage($sourceConfiguration);
+                    array_unshift($sourceOutputs, $tag->render());
+                }
+                // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded()) {
                     $tag = $this->addWebpImage($sourceConfiguration);
                     array_unshift($sourceOutputs, $tag->render());
@@ -165,6 +177,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             // add a webp fallback for the default/non-sources image if addWebp is set
             if ($this->pictureConfiguration->webpShouldBeAddedAfterSrcset()) {
                 $tag = $this->addWebpImage($this->arguments);
+                // TODO : ADD ??
                 $output[] = $tag->render();
             }
         }
@@ -378,6 +391,17 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
+     * Function to add a avif element nested by a picture element.
+     */
+    protected function addAvifImage(array $configuration): TagBuilder
+    {
+        $configuration['fileExtension'] = 'avif';
+        $tag = $this->buildSingleTag('source', $configuration);
+        $tag->addAttribute('type', 'image/avif');
+        return $tag;
+    }
+
+    /**
      * Function to add a webp element nested by a picture element.
      */
     protected function addWebpImage(array $configuration): TagBuilder
@@ -474,6 +498,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      */
     protected function applyProcessingInstructions(array $processingInstructions): ProcessedFile
     {
+        if (($processingInstructions['fileExtension'] ?? '') === 'avif'
+            && $this->image->getExtension() !== 'avif'
+        ) {
+            $jpegQuality = MathUtility::forceIntegerInRange($GLOBALS['TYPO3_CONF_VARS']['GFX']['jpg_quality'], 10, 100, 85);
+            $processingInstructions['additionalParameters'] = '-quality ' . $jpegQuality;
+        }
+
         if (($processingInstructions['fileExtension'] ?? '') === 'webp'
             && $this->image->getExtension() !== 'webp'
         ) {
