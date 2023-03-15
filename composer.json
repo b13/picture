@@ -22,10 +22,11 @@
   },
   "require-dev": {
     "phpstan/phpstan": "^1.8.11",
+    "phpunit/phpunit": "^9.5",
+    "typo3/cms-fluid": "^11.5",
     "typo3/coding-standards": "^0.5",
-    "typo3/testing-framework": "~7.0@dev",
     "typo3/tailor": "^1.1",
-    "typo3/cms-fluid": "^11.5"
+    "typo3/testing-framework": "~7.0@dev"
   },
   "config": {
     "vendor-dir": ".Build/vendor",
@@ -34,7 +35,8 @@
       "typo3/class-alias-loader": true,
       "typo3/cms-composer-installers": true,
       "sbuerk/typo3-cmscomposerinstallers-testingframework-bridge": false
-    }
+    },
+    "sort-packages": true
   },
   "scripts": {
     "prepare-tests-10": [
