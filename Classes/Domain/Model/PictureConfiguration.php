@@ -105,7 +105,7 @@ class PictureConfiguration
 
     public function pictureTagShouldBeAdded(): bool
     {
-        return $this->addWebp || $this->addSources;
+        return $this->addWebp || $this->addSources || !empty($this->arguments['pictureClass']);
     }
 
     protected function breakPointsShouldBeAdded(): bool
@@ -135,7 +135,7 @@ class PictureConfiguration
 
     public function webpShouldBeAddedAfterSrcset(): bool
     {
-        return $this->addWebp || $this->addSources || !empty($this->arguments['pictureClass']);
+        return $this->addWebp || $this->addSources;
     }
 
     public function webpShouldBeAdded(): bool
