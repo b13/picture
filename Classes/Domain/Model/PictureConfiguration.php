@@ -135,7 +135,7 @@ class PictureConfiguration
 
     public function webpShouldBeAddedAfterSrcset(): bool
     {
-        return $this->addWebp && $this->addSources;
+        return $this->addWebp || $this->addSources || !empty($this->arguments['pictureClass']);
     }
 
     public function webpShouldBeAdded(): bool
