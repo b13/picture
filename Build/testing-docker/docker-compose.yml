@@ -88,7 +88,7 @@ services:
           composer require friendsofphp/php-cs-fixer:~3.9.0 typo3/cms-fluid:^10.4 typo3/testing-framework:^6 --dev -W --no-progress --no-interaction
           composer prepare-tests-10
         else
-          composer remove typo3/cms* --dev --no-progress --no-interaction && composer config --no-interaction --no-plugins allow-plugins.sbuerk/typo3-cmscomposerinstallers-testingframework-bridge true && composer require typo3/cms-fluid:12.*.*@dev sbuerk/typo3-cmscomposerinstallers-testingframework-bridge:^0.0.1 --dev -W --no-progress --no-interaction
+          composer require typo3/cms-fluid:^12.4 --dev -W --no-progress --no-interaction
         fi
       "
 
@@ -125,7 +125,7 @@ services:
       typo3DatabaseUsername: root
       typo3DatabasePassword: funcp
       typo3DatabaseHost: mariadb10
-    working_dir: ${ROOT_DIR}/.Build
+    working_dir: ${ROOT_DIR}
     command: >
       /bin/sh -c "
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
@@ -139,13 +139,13 @@ services:
         php -v | grep '^PHP';
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           export XDEBUG_MODE=\"off\"
-          bin/phpunit -c Web/typo3conf/ext/picture/Build/phpunit/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+          .Build/bin/phpunit -c Build/phpunit/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           export XDEBUG_MODE=\"debug,develop\" \
           XDEBUG_TRIGGER=\"foo\" \
           XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\"
-          bin/phpunit -c Web/typo3conf/ext/picture/Build/phpunit/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+          .Build/bin/phpunit -c Build/phpunit/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         fi
       "
   lint:
@@ -208,7 +208,7 @@ services:
       - ${HOST_HOME}:${HOST_HOME}
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
-    working_dir: ${ROOT_DIR}/.Build
+    working_dir: ${ROOT_DIR}
     command: >
       /bin/sh -c "
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
@@ -217,12 +217,12 @@ services:
         php -v | grep '^PHP';
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           XDEBUG_MODE=\"off\" \
-          bin/phpunit -c Web/typo3conf/ext/picture/Build/phpunit/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+          .Build/bin/phpunit -c Build/phpunit/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           XDEBUG_MODE=\"debug,develop\" \
           XDEBUG_TRIGGER=\"foo\" \
           XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\" \
-          bin/phpunit -c Web/typo3conf/ext/picture/Build/phpunit/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+          .Build/bin/phpunit -c Build/phpunit/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         fi
       "
