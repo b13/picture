@@ -24,13 +24,10 @@ class ImageViewHelperTest extends UnitTestCase
      */
     public function getProcessingInstructionsUseCropVariantFromConfigurationIfSet(): void
     {
-        $imageViewHelper = $this->getAccessibleMock(
-            ImageViewHelper::class,
-            ['getCropVariantCollection', 'getImageCropVariant'],
-            [],
-            '',
-            false
-        );
+        $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))
+            ->onlyMethods(['getCropVariantCollection', 'getImageCropVariant'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $image = $this->getMockBuilder(File::class)->disableOriginalConstructor(true)->getMock();
         $cropVariantCollection = $this->getMockBuilder(CropVariantCollection::class)->disableOriginalConstructor(true)->getMock();
         $cropVariantCollection->expects(self::once())->method('getCropArea')->with('foo');
@@ -54,13 +51,10 @@ class ImageViewHelperTest extends UnitTestCase
      */
     public function getProcessingInstructionsCallsGetImageCropVariantIfNotConfigured(): void
     {
-        $imageViewHelper = $this->getAccessibleMock(
-            ImageViewHelper::class,
-            ['getCropVariantCollection', 'getImageCropVariant'],
-            [],
-            '',
-            false
-        );
+        $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))
+            ->onlyMethods(['getCropVariantCollection', 'getImageCropVariant'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $image = $this->getMockBuilder(File::class)->disableOriginalConstructor(true)->getMock();
         $cropVariantCollection = $this->getMockBuilder(CropVariantCollection::class)->disableOriginalConstructor(true)->getMock();
         $cropVariantCollection->expects(self::once())->method('getCropArea')->with('bar');
@@ -83,13 +77,10 @@ class ImageViewHelperTest extends UnitTestCase
      */
     public function getImageCropVariantReturnsCropVariantFromArguments(): void
     {
-        $imageViewHelper = $this->getAccessibleMock(
-            ImageViewHelper::class,
-            ['foo'],
-            [],
-            '',
-            false
-        );
+        $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))
+            ->onlyMethods([])
+            ->disableOriginalConstructor()
+            ->getMock();
         $imageViewHelper->_set('arguments', ['cropVariant' => 'bar']);
         $cropVariant = $imageViewHelper->_call('getImageCropVariant');
         self::assertSame('bar', $cropVariant);
@@ -100,13 +91,10 @@ class ImageViewHelperTest extends UnitTestCase
      */
     public function getImageCropVariantReturnsDefaultIfNotSet(): void
     {
-        $imageViewHelper = $this->getAccessibleMock(
-            ImageViewHelper::class,
-            ['foo'],
-            [],
-            '',
-            false
-        );
+        $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))
+            ->onlyMethods([])
+            ->disableOriginalConstructor()
+            ->getMock();
         $cropVariant = $imageViewHelper->_call('getImageCropVariant');
         self::assertSame('default', $cropVariant);
     }
