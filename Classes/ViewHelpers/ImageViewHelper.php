@@ -189,8 +189,8 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             sort($variants);
             // determine the ratio
             if (!empty($configuration['width']) && !empty($configuration['height'])) {
-                $width = (int)preg_replace('/[^0-9]/', '', $configuration['width']);
-                $height = (int)preg_replace('/[^0-9]/', '', $configuration['height']);
+                $width = (int)preg_replace('/[^0-9]/', '', (string)$configuration['width']);
+                $height = (int)preg_replace('/[^0-9]/', '', (string)$configuration['height']);
                 $ratio = $width / $height;
             }
             foreach ($variants as $variant) {
