@@ -10,7 +10,7 @@ and renders a single src element or a picture element depending on the specified
 
 Install the extension using composer: `composer req b13/picture`.
 
-Include the TypoScript within your main template: 
+Include the TypoScript within your main template:
 
 ```
 @import 'EXT:picture/Configuration/TypoScript/setup.typoscript'
@@ -34,8 +34,9 @@ See `EXT:picture/Configuration/TypoScript/setup.typoscript` for possible configu
 
 | TypoScript Configuration option | Description |
 |---------------------------------|-------------|
-| addWebp | Add webp alternative image files as sources. <br>_default: 0_ |
 | useRetina | Add retina (2x) version of all images as sizes variants. <br>_default: 0_ |
+| addAvif | Add avif alternative image files as sources. <br>_default: 0_ |
+| addWebp | Add webp alternative image files as sources. <br>_default: 0_ |
 | lossless | Enable lossless compression for webp images. <br>_default: 0_ |
 | retina | Use custom or multiple multipliers for calculating retina image variants. <br>_default: <br>retina.2 = 2x<br>Only works in combination with `useRetina = 1` |
 | breakpoints | Use named breakpoints for easier markup of different image sizes for one picture element.<br>_default: empty_. |
@@ -55,6 +56,11 @@ Our image ViewHelper extends from the Fluid Image ViewHelper, so it has all the 
 If useRetina is set and not further specified in TypoScript setup, the corresponding `img` tag's or `source` tag’s
 attribute `srcset` is extended by a 2x retina version of the image.
 
+### addAvif
+Adds rendering of additional images in avif format. If it is specified without a given sources attribute, it renders a
+picture tag instead of a single img tag in order to maintain a browser fallback. If it is specified together with
+`sources` it adds an additional `source` tag above any `source` tag rendered by a given `sources` element.
+
 ### addWebp
 Adds rendering of additional images in webp format. If it is specified without a given sources attribute, it renders a
 picture tag instead of a single img tag in order to maintain a browser fallback. If it is specified together with
@@ -62,7 +68,7 @@ picture tag instead of a single img tag in order to maintain a browser fallback.
 
 ### lossless
 Enable lossless compression for webp images. If you find your webp images lacking in quality compared to jpg/png images, enable
-this option to overwrite default settings for ImageMagick/GraphicsMagick. 
+this option to overwrite default settings for ImageMagick/GraphicsMagick.
 
 ### variants and sizes
 Adds multiple variants of an image with different image sizes, optionally add a sizes-attribute to image tags:
@@ -96,7 +102,7 @@ Add a CSS class used for the `picture` element (if rendered using `<picture>`).
 ## TypoScript Settings
 
 ### In general
-The following attributes can also be set in TypoScript as defaults for your whole site: `addWebp`, `useRetina`. 
+The following attributes can also be set in TypoScript as defaults for your whole site: `useRetina`, `addAvif`, `addWebp`.
 A default setting can be overridden for each usage of the ViewHelper by setting the corresponding attribute.
 
 ### retina
@@ -128,8 +134,8 @@ You can include a test configuration to see the ViewHelper in your test instance
 
 `@import 'EXT:picture/Configuration/TypoScript/test.typoscript'`
 
-This configuration enables frontend rendering of the test file with lots of different rendering examples using the 
-page type `1573387706874`. 
+This configuration enables frontend rendering of the test file with lots of different rendering examples using the
+page type `1573387706874`.
 
 `https://your.local.test.environment/?type=1573387706874`
 
@@ -142,4 +148,4 @@ This extension was created by Andreas Hämmerl and David Steeb in 2019 for b13 G
 
 [Find more TYPO3 extensions we have developed](https://b13.com/useful-typo3-extensions-from-b13-to-you) that help us
 deliver value in client projects. As part of the way we work, we focus on testing and best practices ensuring long-term
-performance, reliability, and results in all our code. 
+performance, reliability, and results in all our code.

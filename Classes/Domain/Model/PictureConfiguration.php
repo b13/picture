@@ -17,8 +17,8 @@ use TYPO3\CMS\Core\Resource\FileInterface;
 class PictureConfiguration
 {
     protected bool $useRetina = false;
-    // 2x is default. Use multiple if retina is set in TypoScript settings.
-    protected array $retinaSettings = [2 => '2x'];
+    protected array $retinaSettings = [2 => '2x']; // 2x is default. Use multiple if retina is set in TypoScript settings.
+    protected bool $addAvif = false;
     protected bool $addWebp = false;
     protected bool $lossless = false;
     protected bool $addBreakpoints = false;
@@ -34,11 +34,14 @@ class PictureConfiguration
         $this->arguments = $arguments;
         $fileExtension = $arguments['fileExtension'] ?? $image->getExtension();
         if ($image->getExtension() !== 'svg') {
-            $this->addWebp = (bool)($fileExtension === 'webp' ? false : ($arguments['addWebp'] ?? $typoScriptSettings['addWebp'] ?? false));
             $this->useRetina = (bool)($arguments['useRetina'] ?? $typoScriptSettings['useRetina'] ?? false);
             if (isset($typoScriptSettings['retina.'])) {
                 $this->retinaSettings = $typoScriptSettings['retina.'];
             }
+
+            $this->addAvif = (bool)($fileExtension === 'avif' ? false : ($arguments['addAvif'] ?? $typoScriptSettings['addAvif'] ?? false));
+            $this->addWebp = (bool)($fileExtension === 'webp' ? false : ($arguments['addWebp'] ?? $typoScriptSettings['addWebp'] ?? false));
+
             $this->lossless = (bool)($arguments['lossless'] ?? $typoScriptSettings['lossless'] ?? false);
             if (isset($typoScriptSettings['breakpoints.'])) {
                 $this->addBreakpoints = true;
@@ -105,7 +108,7 @@ class PictureConfiguration
 
     public function pictureTagShouldBeAdded(): bool
     {
-        return $this->addWebp || $this->addSources;
+        return $this->addAvif || $this->addWebp || $this->addSources;
     }
 
     protected function breakPointsShouldBeAdded(): bool
@@ -130,12 +133,17 @@ class PictureConfiguration
 
     public function webpShouldBeAddedBeforeSrcset(): bool
     {
-        return $this->addWebp && !$this->addSources;
+        return $this->addWebp && !$this->addSources;// TODO : MOD ??
     }
 
     public function webpShouldBeAddedAfterSrcset(): bool
     {
-        return $this->addWebp && $this->addSources;
+        return $this->addWebp && $this->addSources;// TODO : MOD ??
+    }
+
+    public function avifShouldBeAdded(): bool
+    {
+        return $this->addAvif;
     }
 
     public function webpShouldBeAdded(): bool
