@@ -148,6 +148,22 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         if ($this->pictureConfiguration->sourcesShouldBeAdded()) {
             foreach ($this->pictureConfiguration->getSourceConfiguration() as $sourceConfiguration) {
                 $sourceOutputs = [];
+
+                // use src from sourceConfiguration, if set, otherwise use the main image
+                if ((string)$sourceConfiguration['src'] || (string)$sourceConfiguration['image']) {
+                    $imageSrc = $this->imageService->getImage(
+                        (string)$sourceConfiguration['src'],
+                        $sourceConfiguration['image'],
+                        (bool)$sourceConfiguration['treatIdAsReference']
+                    );
+                } else {
+                    $imageSrc = $this->imageService->getImage(
+                        $this->arguments['src'],
+                        $this->arguments['image'],
+                        (bool)$this->arguments['treatIdAsReference']
+                    );
+                }
+                $this->image = $imageSrc;
                 $tag = $this->buildSingleTag('source', $sourceConfiguration);
                 $sourceOutputs[] = $tag->render();
 
