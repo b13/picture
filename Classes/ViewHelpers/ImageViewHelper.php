@@ -150,7 +150,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 $sourceOutputs = [];
 
                 // use src from sourceConfiguration, if set, otherwise use the main image
-                if ((string)$sourceConfiguration['src'] || (string)$sourceConfiguration['image']) {
+                if ((string)$sourceConfiguration['src'] || $sourceConfiguration['image'] ?? false) {
                     $imageSrc = $this->imageService->getImage(
                         (string)$sourceConfiguration['src'],
                         $sourceConfiguration['image'],
