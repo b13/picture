@@ -209,16 +209,18 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 $height = (int)preg_replace('/[^0-9]/', '', (string)$configuration['height']);
                 $ratio = $width / $height;
             }
+            $useWidthHeight = $ratio !== null || empty($configuration['maxWidth']);
+            $useMaxWidth = !empty($configuration['maxWidth']);
             foreach ($variants as $variant) {
                 // build processing instructions for each srcset variant
                 $srcsetWidth = $variant;
                 $srcsetHeight = ($ratio ? $variant * (1 / $ratio) : null);
                 $srcsetProcessingInstructions = [
-                    'width' => $srcsetWidth . (strpos((string)$configuration['width'], 'c') ? 'c' : ''),
-                    'height' => $srcsetHeight . (strpos((string)$configuration['height'], 'c') ? 'c' : ''),
+                    'width' => $useWidthHeight ? ($srcsetWidth . (strpos((string)$configuration['width'], 'c') ? 'c' : '')) : null,
+                    'height' => $useWidthHeight && $srcsetHeight ? ($srcsetHeight . (strpos((string)$configuration['height'], 'c') ? 'c' : '')) : null,
                     'minWidth' => null,
                     'minHeight' => null,
-                    'maxWidth' => null,
+                    'maxWidth' => $useMaxWidth ? $srcsetWidth : null,
                     'maxHeight' => null,
                     'crop' => $processingInstructions['crop'],
                 ];
@@ -409,11 +411,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      */
     protected function wrapWithPictureElement(array $output): array
     {
+        $attributes = '';
         if ($this->arguments['pictureClass'] ?? false) {
-            array_unshift($output, '<picture class="' . $this->arguments['pictureClass'] . '">');
-        } else {
-            array_unshift($output, '<picture>');
+            $attributes = ' ' . GeneralUtility::implodeAttributes([
+                'class' => $this->arguments['pictureClass'],
+            ]);
         }
+        array_unshift($output, '<picture' . $attributes . '>');
         $output[] = '</picture>';
         return $output;
     }
