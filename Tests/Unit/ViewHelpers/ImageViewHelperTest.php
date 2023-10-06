@@ -33,7 +33,6 @@ class ImageViewHelperTest extends UnitTestCase
         $cropVariantCollection->expects(self::once())->method('getCropArea')->with('foo');
         $imageViewHelper->expects(self::once())->method('getCropVariantCollection')->willReturn($cropVariantCollection);
         $imageViewHelper->expects(self::never())->method('getImageCropVariant');
-        $imageViewHelper->_set('image', $image);
         $configuration = [
             'width' => null,
             'height' => null,
@@ -43,7 +42,7 @@ class ImageViewHelperTest extends UnitTestCase
             'maxHeight' => null,
             'cropVariant' => 'foo',
         ];
-        $imageViewHelper->_call('getProcessingInstructions', $configuration);
+        $imageViewHelper->_call('getProcessingInstructions', $configuration, $image);
     }
 
     /**
@@ -60,7 +59,6 @@ class ImageViewHelperTest extends UnitTestCase
         $cropVariantCollection->expects(self::once())->method('getCropArea')->with('bar');
         $imageViewHelper->expects(self::once())->method('getCropVariantCollection')->willReturn($cropVariantCollection);
         $imageViewHelper->expects(self::once())->method('getImageCropVariant')->willReturn('bar');
-        $imageViewHelper->_set('image', $image);
         $configuration = [
             'width' => null,
             'height' => null,
@@ -69,7 +67,7 @@ class ImageViewHelperTest extends UnitTestCase
             'maxWidth' => null,
             'maxHeight' => null,
         ];
-        $imageViewHelper->_call('getProcessingInstructions', $configuration);
+        $imageViewHelper->_call('getProcessingInstructions', $configuration, $image);
     }
 
     /**

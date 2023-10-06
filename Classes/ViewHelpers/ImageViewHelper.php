@@ -29,9 +29,6 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     protected PictureConfiguration $pictureConfiguration;
     protected ImageService $imageService;
 
-    // the standard image without any processing
-    protected FileInterface $image;
-
     public function __construct()
     {
         parent::__construct();
@@ -126,21 +123,22 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             $this->arguments['src'] = (string)$this->arguments['src'];
         }
 
-        $this->image = $this->imageService->getImage(
+        // the standard image without any processing
+        $image = $this->imageService->getImage(
             $this->arguments['src'],
             $this->arguments['image'],
             (bool)$this->arguments['treatIdAsReference']
         );
         $settings = $this->getTypoScriptSettings();
-        $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $this->image);
+        $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $image);
 
         // build the image tag
-        $tag = $this->buildSingleTag('img', $this->arguments);
+        $tag = $this->buildSingleTag('img', $this->arguments, $image);
         $imageTag = $tag->render();
 
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if ($this->pictureConfiguration->webpShouldBeAddedBeforeSrcset()) {
-            $tag = $this->addWebpImage($this->arguments);
+            $tag = $this->addWebpImage($this->arguments, $image);
             $output[] = $tag->render();
         }
 
@@ -157,20 +155,15 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                         (bool)$sourceConfiguration['treatIdAsReference']
                     );
                 } else {
-                    $imageSrc = $this->imageService->getImage(
-                        $this->arguments['src'],
-                        $this->arguments['image'],
-                        (bool)$this->arguments['treatIdAsReference']
-                    );
+                    $imageSrc = $image;
                 }
-                $this->image = $imageSrc;
-                $tag = $this->buildSingleTag('source', $sourceConfiguration);
+                $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
                 $sourceOutputs[] = $tag->render();
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = $tag->getAttribute('type');
                 if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded()) {
-                    $tag = $this->addWebpImage($sourceConfiguration);
+                    $tag = $this->addWebpImage($sourceConfiguration, $imageSrc);
                     array_unshift($sourceOutputs, $tag->render());
                 }
 
@@ -180,7 +173,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             }
             // add a webp fallback for the default/non-sources image if addWebp is set
             if ($this->pictureConfiguration->webpShouldBeAddedAfterSrcset()) {
-                $tag = $this->addWebpImage($this->arguments);
+                $tag = $this->addWebpImage($this->arguments, $image);
                 $output[] = $tag->render();
             }
         }
@@ -194,12 +187,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         return $this->buildOutput($output);
     }
 
-    protected function buildVariantsIfNeeded(array $configuration): string
+    protected function buildVariantsIfNeeded(array $configuration, FileInterface $image): string
     {
         $srcsetValue = '';
         // generate a srcset containing a list of images if that is what we need
         if (!empty($configuration['variants'])) {
-            $processingInstructions = $this->getProcessingInstructions($configuration);
+            $processingInstructions = $this->getProcessingInstructions($configuration, $image);
             $ratio = null;
             $variants = GeneralUtility::intExplode(',', $configuration['variants']);
             sort($variants);
@@ -225,7 +218,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 if (!empty($configuration['fileExtension'] ?? '')) {
                     $srcsetProcessingInstructions['fileExtension'] = $configuration['fileExtension'];
                 }
-                $srcsetImage = $this->applyProcessingInstructions($srcsetProcessingInstructions);
+                $srcsetImage = $this->applyProcessingInstructions($srcsetProcessingInstructions, $image);
                 $srcsetValue .= ($srcsetValue ? ', ' : '');
                 $srcsetValue .= $this->imageService->getImageUri($srcsetImage, $this->arguments['absolute']) . ' ' . $srcsetWidth . 'w';
             }
@@ -236,29 +229,29 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     /**
      * Function to build a single image or source tag.
      */
-    protected function buildSingleTag(string $tagName, array $configuration): TagBuilder
+    protected function buildSingleTag(string $tagName, array $configuration, FileInterface $image): TagBuilder
     {
         $tag = clone $this->tag;
         $tag->setTagName($tagName);
         $tag = $this->removeForbiddenAttributes($tag);
         // generate a srcset containing a list of images if that is what we need
-        $srcsetValue = $this->buildVariantsIfNeeded($configuration);
-        $processingInstructions = $this->getProcessingInstructions($configuration);
+        $srcsetValue = $this->buildVariantsIfNeeded($configuration, $image);
+        $processingInstructions = $this->getProcessingInstructions($configuration, $image);
 
         // generate a single image uri as the src
         // or
         // set the default processed image (we might need the width and height of this image later on) and generate a single image uri as the src fallback
-        $processedImage = $this->applyProcessingInstructions($processingInstructions);
+        $processedImage = $this->applyProcessingInstructions($processingInstructions, $image);
         $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
 
         switch ($tagName) {
             case 'img':
 
                 if (!$tag->hasAttribute('data-focus-area')) {
-                    $cropVariantCollection = $this->getCropVariantCollection();
+                    $cropVariantCollection = $this->getCropVariantCollection($image);
                     $focusArea = $cropVariantCollection->getFocusArea($this->getImageCropVariant());
                     if (!$focusArea->isEmpty()) {
-                        $tag->addAttribute('data-focus-area', (string)$focusArea->makeAbsoluteBasedOnFile($this->image));
+                        $tag->addAttribute('data-focus-area', (string)$focusArea->makeAbsoluteBasedOnFile($image));
                     }
                 }
                 if ($srcsetValue !== '') {
@@ -278,8 +271,8 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     $tag->addAttribute('loading', $this->pictureConfiguration->getLazyLoading());
                 }
 
-                $alt = $this->arguments['alt'] ?: $this->image->getProperty('alternative');
-                $title = $this->arguments['title'] ?: $this->image->getProperty('title');
+                $alt = $this->arguments['alt'] ?: $image->getProperty('alternative');
+                $title = $this->arguments['title'] ?: $image->getProperty('title');
 
                 // The alt-attribute is mandatory to have valid html-code, therefore add it even if it is empty
                 $tag->addAttribute('alt', $alt);
@@ -315,7 +308,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         }
 
         if ($this->pictureConfiguration->retinaShouldBeUsed()) {
-            $this->addRetina($processingInstructions, $tag);
+            $this->addRetina($processingInstructions, $tag, $image);
         }
         return $tag;
     }
@@ -350,13 +343,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     /**
      * Function to render images for given retina resolutions and add to rendering tag.
      */
-    protected function addRetina(array $processingInstructions, TagBuilder $tag): void
+    protected function addRetina(array $processingInstructions, TagBuilder $tag, FileInterface $image): void
     {
         // 2x is default. Use multiple if retina is set in TypoScript settings.
         $retinaSettings = $this->pictureConfiguration->getRetinaSettings();
 
         // Process regular image.
-        $processedImageRegular = $this->applyProcessingInstructions($processingInstructions);
+        $processedImageRegular = $this->applyProcessingInstructions($processingInstructions, $image);
         $imageUriRegular = $this->imageService->getImageUri($processedImageRegular, $this->arguments['absolute']);
 
         // Process additional retina images. Tag value can be gathered for source tags from srcset value as there it
@@ -383,7 +376,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             }
 
             // Process image with new settings.
-            $processedImageRetina = $this->applyProcessingInstructions($retinaProcessingInstructions);
+            $processedImageRetina = $this->applyProcessingInstructions($retinaProcessingInstructions, $image);
             $imageUriRetina = $this->imageService->getImageUri($processedImageRetina, $this->arguments['absolute']);
 
             // Add string for tag.
@@ -396,10 +389,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     /**
      * Function to add a webp element nested by a picture element.
      */
-    protected function addWebpImage(array $configuration): TagBuilder
+    protected function addWebpImage(array $configuration, FileInterface $image): TagBuilder
     {
         $configuration['fileExtension'] = 'webp';
-        $tag = $this->buildSingleTag('source', $configuration);
+        $tag = $this->buildSingleTag('source', $configuration, $image);
         $tag->addAttribute('type', 'image/webp');
         return $tag;
     }
@@ -418,9 +411,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         return $output;
     }
 
-    protected function getProcessingInstructions(array $configuration): array
+    protected function getProcessingInstructions(array $configuration, FileInterface $image): array
     {
-        $cropVariantCollection = $this->getCropVariantCollection();
+        $cropVariantCollection = $this->getCropVariantCollection($image);
         $cropVariant = $configuration['cropVariant'] ?? $this->getImageCropVariant();
         $cropArea = $cropVariantCollection->getCropArea($cropVariant);
         $processingInstructions = [
@@ -430,7 +423,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             'minHeight' => $configuration['minHeight'],
             'maxWidth' => $configuration['maxWidth'],
             'maxHeight' => $configuration['maxHeight'],
-            'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($this->image),
+            'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image),
         ];
         if (!empty($configuration['fileExtension'] ?? '')) {
             $processingInstructions['fileExtension'] = $configuration['fileExtension'];
@@ -443,11 +436,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         return $this->arguments['cropVariant'] ?? 'default';
     }
 
-    protected function getCropVariantCollection(): CropVariantCollection
+    protected function getCropVariantCollection(FileInterface $image): CropVariantCollection
     {
         $cropString = $this->arguments['crop'];
-        if ($cropString === null && $this->image->hasProperty('crop') && $this->image->getProperty('crop')) {
-            $cropString = $this->image->getProperty('crop');
+        if ($cropString === null && $image->hasProperty('crop') && $image->getProperty('crop')) {
+            $cropString = $image->getProperty('crop');
         }
         $cropVariantCollection = CropVariantCollection::create((string)$cropString);
         return $cropVariantCollection;
@@ -488,10 +481,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      * is webp, the source is not and lossless compression is enabled for webp,
      * add the corresponding encoding option to the processing instructions.
      */
-    protected function applyProcessingInstructions(array $processingInstructions): ProcessedFile
+    protected function applyProcessingInstructions(array $processingInstructions, FileInterface $image): ProcessedFile
     {
         if (($processingInstructions['fileExtension'] ?? '') === 'webp'
-            && $this->image->getExtension() !== 'webp'
+            && $image->getExtension() !== 'webp'
         ) {
             if ($this->pictureConfiguration->losslessShouldBeUsed()) {
                 $processingInstructions['additionalParameters'] = '-define webp:lossless=true';
@@ -501,6 +494,6 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             }
         }
 
-        return $this->imageService->applyProcessingInstructions($this->image, $processingInstructions);
+        return $this->imageService->applyProcessingInstructions($image, $processingInstructions);
     }
 }
