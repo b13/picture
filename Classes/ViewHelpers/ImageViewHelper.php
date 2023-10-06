@@ -409,8 +409,8 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      */
     protected function wrapWithPictureElement(array $output): array
     {
-        if ($this->arguments['pictureClass'] ?? false) {
-            array_unshift($output, '<picture class="' . $this->arguments['pictureClass'] . '">');
+        if ($this->pictureConfiguration->hasPictureClass()) {
+            array_unshift($output, '<picture class="' . $this->pictureConfiguration->getPictureClass() . '">');
         } else {
             array_unshift($output, '<picture>');
         }
