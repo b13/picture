@@ -202,8 +202,47 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
+    /**
+     * @test
+     */
+    public function imageWithMultipleSources(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_multiple_sources.csv');
+        $response = $this->executeFrontendRequestWrapper(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        $expected = '<picture class="myPictureClass">
+<source srcset="/typo3temp/assets/_processed_/a/1/csm_Picture_alt_b2b773d76f.png" media="(min-width: 1024px)" />
+<source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_0d0101f0a6.png" />
+<img alt="Testimage with 400px image size, 800px image size with rotated image for screens &gt; 1024px" src="/typo3temp/assets/_processed_/a/2/csm_Picture_0d0101f0a6.png" width="400" height="200" loading="lazy" />
+</picture>';
+        $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
+        self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
+    }
+
+    /**
+     * @test
+     */
+    public function imageWithMultipleSourcesWithWebPOption(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_multiple_sources_with_webp_option.csv');
+        $response = $this->executeFrontendRequestWrapper(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        $expected = '<picture class="myPictureClass">
+<source srcset="/typo3temp/assets/_processed_/a/1/csm_Picture_alt_4b5b9dd7fe.webp" media="(min-width: 1024px)" type="image/webp" />
+<source srcset="/typo3temp/assets/_processed_/a/1/csm_Picture_alt_b2b773d76f.png" media="(min-width: 1024px)" />
+<source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_21770d9a15.webp" type="image/webp" />
+<source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_0d0101f0a6.png" />
+<source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_21770d9a15.webp" type="image/webp" />
+<img alt="Testimage with 400px image size, 800px image size with rotated image for screens &gt; 1024px, with webP option" src="/typo3temp/assets/_processed_/a/2/csm_Picture_0d0101f0a6.png" width="400" height="200" loading="lazy" />
+</picture>';
+        $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
+        self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
+    }
+
     protected function anonymouseProcessdImage(string $content): string
     {
-        return preg_replace('/Picture_[0-9a-z]+\./', 'Picture_xxx.', $content);
+        $content = preg_replace('/Picture_[0-9a-z]+\./', 'Picture_xxx.', $content);
+        $content = preg_replace('/Picture_alt_[0-9a-z]+\./', 'Picture_alt_xxx.', $content);
+        return $content;
     }
 }
