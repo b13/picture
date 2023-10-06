@@ -157,6 +157,33 @@
 		arguments="{html: html, fluid: fluid}"
 />
 
+<h3>Image (Picture element) with multiple sources</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" pictureClass="myPictureClass" sources="{0: {width: 800, media: 'min-width: 1024px', src: 'EXT:picture/Resources/Public/Test/Picture_alt.png'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size with rotated image for screens > 1024px" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" pictureClass="myPictureClass" sources="{0: {width: 800, media: 'min-width: 1024px', src: 'EXT:picture/Resources/Public/Test/Picture_alt.png'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size with rotated image for screens > 1024px" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
+<h3>Image (Picture element) with multiple sources and webP option</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" pictureClass="myPictureClass" sources="{0: {width: 800, media: 'min-width: 1024px', src: 'EXT:picture/Resources/Public/Test/Picture_alt.png'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size with rotated image for screens > 1024px, with webP option" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" pictureClass="myPictureClass" sources="{0: {width: 800, media: 'min-width: 1024px', src: 'EXT:picture/Resources/Public/Test/Picture_alt.png'}, 1: {width: 400}}" alt="Testimage with 400px image size, 800px image size with rotated image for screens > 1024px, with webP option" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
 
 <h2>Breakpoint testing</h2>
 
