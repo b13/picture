@@ -202,6 +202,18 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
+    /**
+     * @test
+     */
+    public function imageWithPictureClassRenderPictureTag(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_picture_class.csv');
+        $response = $this->executeFrontendRequestWrapper(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        $expected = '<picture class="my-class"><img src="/typo3conf/ext/picture/Resources/Public/Icons/Extension.svg" width="256" height="256" alt="" /></picture>';
+        self::assertStringContainsString($expected, $body);
+    }
+
     protected function anonymouseProcessdImage(string $content): string
     {
         return preg_replace('/Picture_[0-9a-z]+\./', 'Picture_xxx.', $content);

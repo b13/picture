@@ -28,6 +28,7 @@ class PictureConfiguration
     protected bool $addLazyLoading = false;
     protected string $lazyLoading = '';
     protected array $arguments;
+    protected ?string $pictureClass = null;
 
     public function __construct(array $arguments, array $typoScriptSettings, FileInterface $image)
     {
@@ -53,6 +54,19 @@ class PictureConfiguration
                 $this->lazyLoading = (string)$typoScriptSettings['lazyLoading'];
             }
         }
+        if (isset($arguments['pictureClass'])) {
+            $this->pictureClass = $arguments['pictureClass'];
+        }
+    }
+
+    public function getPictureClass(): ?string
+    {
+        return $this->pictureClass;
+    }
+
+    public function hasPictureClass(): bool
+    {
+        return $this->pictureClass !== null;
     }
 
     public function getSourceConfiguration(): array
@@ -105,7 +119,7 @@ class PictureConfiguration
 
     public function pictureTagShouldBeAdded(): bool
     {
-        return $this->addWebp || $this->addSources;
+        return $this->addWebp || $this->addSources || $this->hasPictureClass();
     }
 
     protected function breakPointsShouldBeAdded(): bool
