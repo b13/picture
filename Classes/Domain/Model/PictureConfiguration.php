@@ -53,6 +53,10 @@ class PictureConfiguration
                 $this->addLazyLoading = true;
                 $this->lazyLoading = (string)$typoScriptSettings['lazyLoading'];
             }
+            // do not add retina images for elements with variants (the browser should select the best-sized image)
+            if(!empty($arguments['sizes'])) {
+                $this->useRetina = false;
+            }
         }
         if (isset($arguments['pictureClass'])) {
             $this->pictureClass = $arguments['pictureClass'];
