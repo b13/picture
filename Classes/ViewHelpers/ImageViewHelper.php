@@ -13,9 +13,12 @@ namespace B13\Picture\ViewHelpers;
  */
 
 use B13\Picture\Domain\Model\PictureConfiguration;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
+use TYPO3\CMS\Core\TypoScript\FrontendTypoScript;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Service\ImageService;
@@ -461,11 +464,27 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     protected function getTypoScriptSettings(): array
     {
         $settings = [];
-        $frontendController = $this->getFrontendController();
-        if ($frontendController instanceof TypoScriptFrontendController) {
-            $settings = $frontendController->tmpl->setup['plugin.']['tx_picture.'] ?? [];
+        if (GeneralUtility::makeInstance(Typo3Version::class)->getMajorVersion() < 12) {
+            $frontendController = $this->getFrontendController();
+            if ($frontendController instanceof TypoScriptFrontendController) {
+                $settings = $frontendController->tmpl->setup['plugin.']['tx_picture.'] ?? [];
+            }
+            return $settings;
         }
+        $request = $this->getServerRequest();
+        if ($request === null) {
+            return $settings;
+        }
+        /** @var FrontendTypoScript $typoScript */
+        $typoScript = $request->getAttribute('frontend.typoscript');
+        $setup = $typoScript->getSetupArray();
+        $settings = $setup['plugin.']['tx_picture.'] ?? [];
         return $settings;
+    }
+
+    protected function getServerRequest(): ?ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'] ?? null;
     }
 
     protected function getFrontendController(): ?TypoScriptFrontendController
