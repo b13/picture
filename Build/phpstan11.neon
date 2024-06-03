@@ -1,0 +1,7 @@
+parameters:
+  level: 5
+
+  paths:
+    - %currentWorkingDirectory%/Classes
+  ignoreErrors:
+    - '#.*unknown class TYPO3\\CMS\\Core\\TypoScript\\FrontendTypoScript.#'

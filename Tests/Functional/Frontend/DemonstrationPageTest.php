@@ -12,11 +12,14 @@ namespace B13\Picture\Tests\Functional\Frontend;
  * of the License, or any later version.
  */
 
-use B13\Picture\Tests\Functional\Functional\AbstractFrontendTest;
 use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-class ImageViewHelperTest extends AbstractFrontendTest
+class DemonstrationPageTest extends FunctionalTestCase
 {
+    protected array $pathsToLinkInTestInstance = ['typo3conf/ext/picture/Build/sites' => 'typo3conf/sites'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/picture'];
+
     /**
      * @test
      */
@@ -30,7 +33,7 @@ class ImageViewHelperTest extends AbstractFrontendTest
                 'setup' => ['EXT:picture/Configuration/TypoScript/test.typoscript'],
             ]
         );
-        $response = $this->executeFrontendRequest(new InternalRequest('/?type=1573387706874'));
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/?type=1573387706874'));
         $status = $response->getStatusCode();
         self::assertSame(200, $status);
     }

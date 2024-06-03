@@ -12,27 +12,11 @@
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Core\Information\Typo3Version;
-
 call_user_func(function () {
     if (!class_exists(\TYPO3\CMS\Frontend\Page\PageRepository::class)) {
         class_alias(\TYPO3\CMS\Core\Domain\Repository\PageRepository::class, \TYPO3\CMS\Frontend\Page\PageRepository::class);
     }
     $testbase = new \TYPO3\TestingFramework\Core\Testbase();
-
-    // These if's are for core testing (package typo3/cms) only. cms-composer-installer does
-    // not create the autoload-include.php file that sets these env vars and sets composer
-    // mode to true. testing-framework can not be used without composer anyway, so it is safe
-    // to do this here. This way it does not matter if 'bin/phpunit' or 'vendor/phpunit/phpunit/phpunit'
-    // is called to run the tests since the 'relative to entry script' path calculation within
-    // SystemEnvironmentBuilder is not used. However, the binary must be called from the document
-    // root since getWebRoot() uses 'getcwd()'.
-    if (!getenv('TYPO3_PATH_ROOT')) {
-        putenv('TYPO3_PATH_ROOT=' . rtrim($testbase->getWebRoot(), '/'));
-    }
-    if (!getenv('TYPO3_PATH_WEB')) {
-        putenv('TYPO3_PATH_WEB=' . rtrim($testbase->getWebRoot(), '/'));
-    }
 
     $testbase->defineSitePath();
 
@@ -56,18 +40,12 @@ call_user_func(function () {
         'core',
         new \TYPO3\CMS\Core\Cache\Backend\NullBackend('production', [])
     );
-    // Set all packages to active
-    if (version_compare((new Typo3Version())->getVersion(), '11.3.0', '>')) {
-        $packageManager = \TYPO3\CMS\Core\Core\Bootstrap::createPackageManager(
-            \TYPO3\CMS\Core\Package\UnitTestPackageManager::class,
-            \TYPO3\CMS\Core\Core\Bootstrap::createPackageCache($cache)
-        );
-    } else {
-        $packageManager = \TYPO3\CMS\Core\Core\Bootstrap::createPackageManager(
-            \TYPO3\CMS\Core\Package\UnitTestPackageManager::class,
-            $cache
-        );
-    }
+
+    $packageManager = \TYPO3\CMS\Core\Core\Bootstrap::createPackageManager(
+        \TYPO3\CMS\Core\Package\UnitTestPackageManager::class,
+        \TYPO3\CMS\Core\Core\Bootstrap::createPackageCache($cache)
+    );
+
     \TYPO3\CMS\Core\Utility\GeneralUtility::setSingletonInstance(\TYPO3\CMS\Core\Package\PackageManager::class, $packageManager);
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::setPackageManager($packageManager);
 

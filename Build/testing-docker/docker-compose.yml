@@ -83,12 +83,11 @@ services:
         fi
         php -v | grep '^PHP';
         if [ ${TYPO3} -eq 11 ]; then
-          composer install --no-progress --no-interaction
-        elif [ ${TYPO3} -eq 10 ]; then
-          composer require friendsofphp/php-cs-fixer:~3.9.0 typo3/cms-fluid:^10.4 typo3/testing-framework:^6 --dev -W --no-progress --no-interaction
-          composer prepare-tests-10
-        else
+          composer require typo3/cms-fluid:^11.5 --dev -W --no-progress --no-interaction
+        elif [ ${TYPO3} -eq 12 ]; then
           composer require typo3/cms-fluid:^12.4 --dev -W --no-progress --no-interaction
+        else
+          composer install --dev --no-progress --no-interaction
         fi
       "
 
@@ -165,23 +164,6 @@ services:
         find . -name \\*.php ! -path "./.Build/\\*" -print0 | xargs -0 -n1 -P4 php -dxdebug.mode=off -l >/dev/null
       "
 
-  patchV10:
-    image: typo3/core-testing-${DOCKER_PHP_IMAGE}:latest
-    user: ${HOST_UID}
-    volumes:
-      - ${ROOT_DIR}:${ROOT_DIR}
-      - ${HOST_HOME}:${HOST_HOME}
-      - /etc/passwd:/etc/passwd:ro
-      - /etc/group:/etc/group:ro
-    working_dir: ${ROOT_DIR}
-    command: >
-      /bin/sh -c "
-        find Tests -name \\*.php -print0 | xargs -0 sed -i 's/protected array \(.*\)testExtensionsToLoad = \[/protected \1testExtensionsToLoad = [/g';
-        find Tests -name \\*.php -print0 | xargs -0 sed -i 's/protected bool \(.*\)resetSingletonInstances = /protected \1resetSingletonInstances = /g';
-        find Tests -name \\*.php -print0 | xargs -0 sed -i 's/protected array \(.*\)coreExtensionsToLoad = \[/protected \1coreExtensionsToLoad = [/g';
-        find Tests -name \\*.php -print0 | xargs -0 sed -i 's/protected array \(.*\)pathsToLinkInTestInstance = \[/protected \1pathsToLinkInTestInstance = [/g';
-      "
-
   phpstan:
     image: typo3/core-testing-${DOCKER_PHP_IMAGE}:latest
     user: ${HOST_UID}
@@ -197,7 +179,11 @@ services:
           set -x
         fi
         php -v | grep '^PHP';
+      if [ ${TYPO3} -eq 11 ]; then
+        php -dxdebug.mode=off .Build/bin/phpstan analyze -c Build/phpstan11.neon --no-progress --no-interaction
+      else
         php -dxdebug.mode=off .Build/bin/phpstan analyze -c Build/phpstan.neon --no-progress --no-interaction
+      fi
       "
 
   unit:

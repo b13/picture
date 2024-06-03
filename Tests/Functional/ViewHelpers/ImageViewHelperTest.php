@@ -12,6 +12,7 @@ namespace B13\Picture\Tests\Functional\ViewHelpers;
  * of the License, or any later version.
  */
 
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Type\File\ImageInfo;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -69,14 +70,14 @@ class ImageViewHelperTest extends FunctionalTestCase
             ->where(
                 $queryBuilder->expr()->eq(
                     'width',
-                    $queryBuilder->createNamedParameter($width, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($width, Connection::PARAM_INT)
                 ),
                 $queryBuilder->expr()->eq(
                     'height',
-                    $queryBuilder->createNamedParameter($height, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($height, Connection::PARAM_INT)
                 )
             )
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
         self::assertTrue($row !== false, 'row with width: ' . $width . ' and height: ' . $height . ' not found');
         $filePath = GeneralUtility::getFileAbsFileName($this->fileadmin . $row['identifier']);

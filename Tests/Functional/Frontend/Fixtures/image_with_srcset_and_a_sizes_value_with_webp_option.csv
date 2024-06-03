@@ -9,4 +9,5 @@ page.config.disableAllHeaderCode = 1
 page.10 = FLUIDTEMPLATE
 page.10.templateRootPaths.10 = EXT:picture/Tests/Functional/Frontend/Fixtures/Templates
 page.10.templateName = ImageWithSrcsetAndASizesValueWithWebpOption.html
+config.absRefPrefix = /
 "
