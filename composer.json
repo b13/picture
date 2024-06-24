@@ -31,15 +31,9 @@
     "bin-dir": ".Build/bin",
     "allow-plugins": {
       "typo3/class-alias-loader": true,
-      "typo3/cms-composer-installers": true,
-      "sbuerk/typo3-cmscomposerinstallers-testingframework-bridge": false
+      "typo3/cms-composer-installers": true
     },
     "sort-packages": true
-  },
-  "scripts": {
-    "prepare-tests-10": [
-      "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
-    ]
   },
   "autoload-dev": {
     "psr-4": {
