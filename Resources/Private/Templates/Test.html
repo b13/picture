@@ -67,6 +67,20 @@
 		arguments="{html: html, fluid: fluid}"
 />
 
+<h3>Simple Image with onlyWebp option</h3>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" onlyWebp="1" alt="Testimage 400px width with addWebp option" />
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" addWebp="1" onlyWebp="1" alt="Testimage 400px width with addWebp option" /&gt;
+</f:variable>
+
+<f:render
+		section="Element"
+		arguments="{html: html, fluid: fluid}"
+/>
+
 <h3>Simple Image with Retina and addWebp option</h3>
 
 <f:variable name="html">

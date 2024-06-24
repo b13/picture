@@ -79,6 +79,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         );
 
         $this->registerArgument(
+            'onlyWebp',
+            'bool',
+            'Specifies if image should be rendered only in webp.'
+        );
+
+        $this->registerArgument(
             'lossless',
             'bool',
             'Specifies whether webp images should use lossless compression'
@@ -136,8 +142,14 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $image);
 
         // build the image tag
-        $tag = $this->buildSingleTag('img', $this->arguments, $image);
-        $imageTag = $tag->render();
+        if (!$this->pictureConfiguration->webpShouldBeAddedOnly()) {
+            $tag = $this->buildSingleTag('img', $this->arguments, $image);
+            $imageTag = $tag->render();
+        } else {
+            $this->arguments['fileExtension'] = 'webp';
+            $tag = $this->buildSingleTag('img', $this->arguments, $image);
+            $imageTag = $tag->render();
+        }
 
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if ($this->pictureConfiguration->webpShouldBeAddedBeforeSrcset()) {
@@ -160,8 +172,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 } else {
                     $imageSrc = $image;
                 }
-                $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
-                $sourceOutputs[] = $tag->render();
+                // Build source tag if onlyWebp is not set
+                if (!$this->pictureConfiguration->webpShouldBeAddedOnly()) {
+                    $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
+                    $sourceOutputs[] = $tag->render();
+                }
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = $tag->getAttribute('type');
