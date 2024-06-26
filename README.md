@@ -44,8 +44,9 @@ See `EXT:picture/Configuration/TypoScript/setup.typoscript` for possible configu
 ## Attributes
 
 ### All from f:image
-Our image ViewHelper extends from the Fluid Image ViewHelper, so it has all the same attributes, including:
+Our image ViewHelper mimics the Fluid Image ViewHelper, so it has all the same attributes, including:
 * `width` and `height`, including `c` option for crop scaling
+* `maxWidth` for proportional scaling, without upscaling
 * `fileExtension` to set a file extension (to force webp for example)
 * `alt` and `title`
 * `cropVariant`
