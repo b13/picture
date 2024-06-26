@@ -197,7 +197,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         if (!empty($configuration['variants'])) {
             $processingInstructions = $this->getProcessingInstructions($configuration, $image);
             $ratio = null;
-            $variants = GeneralUtility::intExplode(',', $configuration['variants']);
+            $variants = GeneralUtility::intExplode(',', (string)$configuration['variants']);
             sort($variants);
             // determine the ratio
             if (!empty($configuration['width']) && !empty($configuration['height'])) {
