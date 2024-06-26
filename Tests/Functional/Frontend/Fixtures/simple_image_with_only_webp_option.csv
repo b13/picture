@@ -1,0 +1,12 @@
+"pages"
+,"uid","pid","title","slug"
+,1,0,"root","/"
+"sys_template"
+,"uid","pid","root","constants","config"
+,1,1,1,styles.content.image.lazyLoading=lazy,"@import 'EXT:picture/Configuration/TypoScript/test.typoscript'
+page = PAGE
+page.config.disableAllHeaderCode = 1
+page.10 = FLUIDTEMPLATE
+page.10.templateRootPaths.10 = EXT:picture/Tests/Functional/Frontend/Fixtures/Templates
+page.10.templateName = SimpleImageWithOnlyWebpOption.html
+"
