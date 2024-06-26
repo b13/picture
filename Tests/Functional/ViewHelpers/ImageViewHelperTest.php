@@ -50,6 +50,26 @@ class ImageViewHelperTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function imageWithSourcesAndRetina(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
+        $template = __DIR__ . '/Fixtures/ImageWithSourcesAndRetina.html';
+        $view = GeneralUtility::makeInstance(StandaloneView::class);
+        $view->setTemplatePathAndFilename($template);
+        $content = $view->render();
+        $this->assertProcessedFileExists(150, 150);
+        $this->assertProcessedFileExists(300, 300);
+        $this->assertProcessedFileExists(1680, 1000);
+        $this->assertProcessedFileExists(3360, 2000);
+        self::assertTrue(str_starts_with(trim($content), '<picture><source srcset='));
+        self::assertTrue(str_contains(trim($content), '<img src='));
+        self::assertTrue(!str_contains(trim($content), 'eID=dumpFile&amp;amp;'));
+        self::assertTrue(str_contains(trim($content), 'eID=dumpFile&amp;t='));
+    }
+
+    /**
+     * @test
+     */
     public function simpleImage(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
