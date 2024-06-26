@@ -196,6 +196,20 @@
 	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400" pictureClass="myPictureClass" sources="{lg: {width: 800}, md: {width: 600}, sm: {width: 400}}" alt="Testimage with 3 breakpoints referenced by name" /&gt;
 </f:variable>
 
+
+<h2>Different source image</h2>
+
+<f:variable name="html">
+	<i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400"
+					 sources="{sm: {src: 'EXT:picture/Resources/Public/Test/Picture_alt.png', width: 200}}"
+	/>
+</f:variable>
+<f:variable name="fluid">
+	&lt;i:image src="EXT:picture/Resources/Public/Test/Picture.png" width="400"
+					 sources="{sm: {src: 'EXT:picture/Resources/Public/Test/Picture_alt.png', width: 200}}"
+	/&gt;
+</f:variable>
+
 <f:render
 		section="Element"
 		arguments="{html: html, fluid: fluid}"
