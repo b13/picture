@@ -53,11 +53,8 @@ class TagRenderingTest extends FunctionalTestCase
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_only_webp_option.csv');
         $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
         $body = (string)$response->getBody();
-        $expected = ' <picture>
-<source srcset="typo3temp/assets/_processed_/a/2/csm_Picture_xxx.webp" media="(min-width: 1024px)" />
-<img alt="Testimage 400px width" src="typo3temp/assets/_processed_/a/2/csm_Picture_xxx.webp" width="400" height="200" loading="lazy" />
-</picture>';
-        $expected = implode(' ', GeneralUtility::trimExplode("\n", $expected));
+        $expected = '<picture><source srcset="typo3temp/assets/_processed_/a/2/csm_Picture_xxx.webp" media="(min-width: 1024px)" /><img alt="Testimage 400px width" src="typo3temp/assets/_processed_/a/2/csm_Picture_xxx.webp" width="400" height="200" loading="lazy" /></picture>';
+        $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
