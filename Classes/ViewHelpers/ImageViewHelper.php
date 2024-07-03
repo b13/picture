@@ -142,14 +142,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $image);
 
         // build the image tag
-        if (!$this->pictureConfiguration->webpShouldBeAddedOnly()) {
-            $tag = $this->buildSingleTag('img', $this->arguments, $image);
-            $imageTag = $tag->render();
-        } else {
+        if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
             $this->arguments['fileExtension'] = 'webp';
-            $tag = $this->buildSingleTag('img', $this->arguments, $image);
-            $imageTag = $tag->render();
         }
+        $tag = $this->buildSingleTag('img', $this->arguments, $image);
+        $imageTag = $tag->render();
 
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if ($this->pictureConfiguration->webpShouldBeAddedBeforeSrcset()) {
