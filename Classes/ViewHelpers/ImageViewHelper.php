@@ -181,7 +181,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 $sourceOutputs[] = $tag->render();
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
-                $type = $tag->getAttribute('type');
+                $type = htmlspecialchars_decode($tag->getAttribute('type') ?? '');
                 if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded()) {
                     $tag = $this->addWebpImage($sourceConfiguration, $imageSrc);
                     array_unshift($sourceOutputs, $tag->render());
@@ -214,7 +214,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         if (!empty($configuration['variants'])) {
             $processingInstructions = $this->getProcessingInstructions($configuration, $image);
             $ratio = null;
-            $variants = GeneralUtility::intExplode(',', $configuration['variants']);
+            $variants = GeneralUtility::intExplode(',', (string)$configuration['variants']);
             sort($variants);
             // determine the ratio
             if (!empty($configuration['width']) && !empty($configuration['height'])) {
@@ -222,16 +222,18 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 $height = (int)preg_replace('/[^0-9]/', '', (string)$configuration['height']);
                 $ratio = $width / $height;
             }
+            $useWidthHeight = $ratio !== null || empty($configuration['maxWidth']);
+            $useMaxWidth = !empty($configuration['maxWidth']);
             foreach ($variants as $variant) {
                 // build processing instructions for each srcset variant
                 $srcsetWidth = $variant;
                 $srcsetHeight = ($ratio ? $variant * (1 / $ratio) : null);
                 $srcsetProcessingInstructions = [
-                    'width' => $srcsetWidth . (strpos((string)$configuration['width'], 'c') ? 'c' : ''),
-                    'height' => $srcsetHeight . (strpos((string)$configuration['height'], 'c') ? 'c' : ''),
+                    'width' => $useWidthHeight ? ($srcsetWidth . (strpos((string)$configuration['width'], 'c') ? 'c' : '')) : null,
+                    'height' => $useWidthHeight && $srcsetHeight ? ($srcsetHeight . (strpos((string)$configuration['height'], 'c') ? 'c' : '')) : null,
                     'minWidth' => null,
                     'minHeight' => null,
-                    'maxWidth' => null,
+                    'maxWidth' => $useMaxWidth ? $srcsetWidth : null,
                     'maxHeight' => null,
                     'crop' => $processingInstructions['crop'],
                 ];
@@ -375,7 +377,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         // Process additional retina images. Tag value can be gathered for source tags from srcset value as there it
         // was to be set already because adding retina is not mandatory.
         if ($tag->hasAttribute('srcset')) {
-            $tagValue = $tag->getAttribute('srcset');
+            $tagValue = htmlspecialchars_decode($tag->getAttribute('srcset') ?? '');
             $tag->removeAttribute('srcset');
         } else {
             $tagValue = $imageUriRegular;
@@ -422,11 +424,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
      */
     protected function wrapWithPictureElement(array $output): array
     {
+        $attributes = '';
         if ($this->pictureConfiguration->hasPictureClass()) {
-            array_unshift($output, '<picture class="' . $this->pictureConfiguration->getPictureClass() . '">');
-        } else {
-            array_unshift($output, '<picture>');
+            $attributes = ' ' . GeneralUtility::implodeAttributes([
+                'class' => $this->pictureConfiguration->getPictureClass(),
+            ]);
         }
+        array_unshift($output, '<picture' . $attributes . '>');
         $output[] = '</picture>';
         return $output;
     }
