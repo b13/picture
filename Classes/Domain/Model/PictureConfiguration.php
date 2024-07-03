@@ -167,9 +167,4 @@ class PictureConfiguration
     {
         return $this->onlyWebp;
     }
-
-    public function webpShouldBeAddedOnly(): bool
-    {
-        return $this->onlyWebp;
-    }
 }
