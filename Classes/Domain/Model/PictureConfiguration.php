@@ -150,17 +150,17 @@ class PictureConfiguration
 
     public function webpShouldBeAddedBeforeSrcset(): bool
     {
-        return $this->addWebp && !$this->addSources;
+        return $this->addWebp && !$this->onlyWebp && !$this->addSources;
     }
 
     public function webpShouldBeAddedAfterSrcset(): bool
     {
-        return $this->addWebp && $this->addSources;
+        return $this->addWebp && !$this->onlyWebp && $this->addSources;
     }
 
     public function webpShouldBeAdded(): bool
     {
-        return $this->addWebp;
+        return $this->addWebp && !$this->onlyWebp;
     }
 
     public function webpShouldBeAddedOnly(): bool

@@ -172,11 +172,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 } else {
                     $imageSrc = $image;
                 }
-                // Build source tag if onlyWebp is not set
-                if (!$this->pictureConfiguration->webpShouldBeAddedOnly()) {
-                    $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
-                    $sourceOutputs[] = $tag->render();
+
+                // Force webp rendering if onlyWebp is set
+                if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
+                    $sourceConfiguration['fileExtension'] = 'webp';
                 }
+                $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
+                $sourceOutputs[] = $tag->render();
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = $tag->getAttribute('type');
