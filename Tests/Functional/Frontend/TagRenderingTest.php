@@ -51,7 +51,7 @@ class TagRenderingTest extends FunctionalTestCase
     public function simpleImageWithOnlyWebp(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_only_webp_option.csv');
-        $response = $this->executeFrontendRequestWrapper(new InternalRequest('http://localhost/'));
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
         $body = (string)$response->getBody();
         $expected = '<img alt="Testimage 400px width" src="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp" width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
