@@ -210,7 +210,7 @@ width="400" height="200" loading="lazy" />';
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_picture_class.csv');
         $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
         $body = (string)$response->getBody();
-        $expected = '<picture class="my-class"><img src="/typo3conf/ext/picture/Resources/Public/Icons/Extension.svg" width="256" height="256" alt="" /></picture>';
+        $expected = '<picture class="my-class"><img src="/typo3conf/ext/picture/Resources/Public/Icons/Extension.svg" width="256" height="256" loading="lazy" alt="" /></picture>';
         self::assertStringContainsString($expected, $body);
     }
 
