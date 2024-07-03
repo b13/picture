@@ -51,10 +51,6 @@ class PictureConfiguration
                 $this->sources = $arguments['sources'];
                 $this->addSources = true;
             }
-            if (!empty($typoScriptSettings['lazyLoading']) && !isset($arguments['loading'])) {
-                $this->addLazyLoading = true;
-                $this->lazyLoading = (string)$typoScriptSettings['lazyLoading'];
-            }
             // do not add retina images for elements with variants (the browser should select the best-sized image)
             if (!empty($arguments['sizes'])) {
                 $this->useRetina = false;
@@ -62,6 +58,10 @@ class PictureConfiguration
         }
         if (isset($arguments['pictureClass'])) {
             $this->pictureClass = $arguments['pictureClass'];
+        }
+        if (!empty($typoScriptSettings['lazyLoading']) && !isset($arguments['loading'])) {
+            $this->addLazyLoading = true;
+            $this->lazyLoading = (string)$typoScriptSettings['lazyLoading'];
         }
     }
 
