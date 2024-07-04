@@ -79,6 +79,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         );
 
         $this->registerArgument(
+            'onlyWebp',
+            'bool',
+            'Specifies if image should be rendered only in webp.'
+        );
+
+        $this->registerArgument(
             'lossless',
             'bool',
             'Specifies whether webp images should use lossless compression'
@@ -136,6 +142,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $image);
 
         // build the image tag
+        if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
+            $this->arguments['fileExtension'] = 'webp';
+        }
         $tag = $this->buildSingleTag('img', $this->arguments, $image);
         $imageTag = $tag->render();
 
@@ -159,6 +168,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     );
                 } else {
                     $imageSrc = $image;
+                }
+
+                // Force webp rendering if onlyWebp is set
+                if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
+                    $sourceConfiguration['fileExtension'] = 'webp';
                 }
                 $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
                 $sourceOutputs[] = $tag->render();

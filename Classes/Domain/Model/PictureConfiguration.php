@@ -20,6 +20,7 @@ class PictureConfiguration
     // 2x is default. Use multiple if retina is set in TypoScript settings.
     protected array $retinaSettings = [2 => '2x'];
     protected bool $addWebp = false;
+    protected bool $onlyWebp = false;
     protected bool $lossless = false;
     protected bool $addBreakpoints = false;
     protected array $breakpoints = [];
@@ -36,6 +37,7 @@ class PictureConfiguration
         $fileExtension = $arguments['fileExtension'] ?? $image->getExtension();
         if ($image->getExtension() !== 'svg') {
             $this->addWebp = (bool)($fileExtension === 'webp' ? false : ($arguments['addWebp'] ?? $typoScriptSettings['addWebp'] ?? false));
+            $this->onlyWebp = (bool)($fileExtension === 'webp' ? false : ($arguments['onlyWebp'] ?? $typoScriptSettings['onlyWebp'] ?? false));
             $this->useRetina = (bool)($arguments['useRetina'] ?? $typoScriptSettings['useRetina'] ?? false);
             if (isset($typoScriptSettings['retina.'])) {
                 $this->retinaSettings = $typoScriptSettings['retina.'];
@@ -148,16 +150,21 @@ class PictureConfiguration
 
     public function webpShouldBeAddedBeforeSrcset(): bool
     {
-        return $this->addWebp && !$this->addSources;
+        return $this->addWebp && !$this->onlyWebp && !$this->addSources;
     }
 
     public function webpShouldBeAddedAfterSrcset(): bool
     {
-        return $this->addWebp && $this->addSources;
+        return $this->addWebp && !$this->onlyWebp && $this->addSources;
     }
 
     public function webpShouldBeAdded(): bool
     {
-        return $this->addWebp;
+        return $this->addWebp && !$this->onlyWebp;
+    }
+
+    public function webpShouldBeAddedOnly(): bool
+    {
+        return $this->onlyWebp;
     }
 }

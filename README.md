@@ -35,6 +35,7 @@ See `EXT:picture/Configuration/TypoScript/setup.typoscript` for possible configu
 | TypoScript Configuration option | Description |
 |---------------------------------|-------------|
 | addWebp | Add webp alternative image files as sources. <br>_default: 0_ |
+| onlyWebp | Enable only images in webp format and for all size variants. <br>_default: 0_ |
 | useRetina | Add retina (2x) version of all images as sizes variants. <br>_default: 0_ |
 | lossless | Enable lossless compression for webp images. <br>_default: 0_ |
 | retina | Use custom or multiple multipliers for calculating retina image variants. <br>_default: <br>retina.2 = 2x<br>Only works in combination with `useRetina = 1` |
@@ -60,6 +61,9 @@ attribute `srcset` is extended by a 2x retina version of the image.
 Adds rendering of additional images in webp format. If it is specified without a given sources attribute, it renders a
 picture tag instead of a single img tag in order to maintain a browser fallback. If it is specified together with
 `sources` it adds an additional `source` tag above any `source` tag rendered by a given `sources` element.
+
+### onlyWebp
+Enable only images in webp format and for all size variants.
 
 ### lossless
 Enable lossless compression for webp images. If you find your webp images lacking in quality compared to jpg/png images, enable

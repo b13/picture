@@ -2,6 +2,9 @@ plugin.tx_picture {
   # Default for adding of images as webp.
   addWebp = 0
 
+  # Default for render images as webp only.
+  onlyWebp = 0
+
   # Default for adding retina images.
   useRetina = 0
 
