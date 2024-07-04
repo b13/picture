@@ -61,9 +61,11 @@ attribute `srcset` is extended by a 2x retina version of the image.
 Adds rendering of additional images in webp format. If it is specified without a given sources attribute, it renders a
 picture tag instead of a single img tag in order to maintain a browser fallback. If it is specified together with
 `sources` it adds an additional `source` tag above any `source` tag rendered by a given `sources` element.
+This attribute is ignored if `onlyWebp` option is active.
 
 ### onlyWebp
 Enable only images in webp format and for all size variants.
+Enabling this option disables `addWebp` setting.
 
 ### lossless
 Enable lossless compression for webp images. If you find your webp images lacking in quality compared to jpg/png images, enable
