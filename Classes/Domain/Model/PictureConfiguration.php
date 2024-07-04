@@ -125,7 +125,7 @@ class PictureConfiguration
 
     public function pictureTagShouldBeAdded(): bool
     {
-        return $this->addWebp || $this->addSources || $this->hasPictureClass();
+        return ($this->addWebp && !$this->onlyWebp) || $this->addSources || $this->hasPictureClass();
     }
 
     protected function breakPointsShouldBeAdded(): bool
