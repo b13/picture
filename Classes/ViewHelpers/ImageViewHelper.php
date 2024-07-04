@@ -142,14 +142,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->pictureConfiguration = GeneralUtility::makeInstance(PictureConfiguration::class, $this->arguments, $settings, $image);
 
         // build the image tag
-        if (!$this->pictureConfiguration->webpShouldBeAddedOnly()) {
-            $tag = $this->buildSingleTag('img', $this->arguments, $image);
-            $imageTag = $tag->render();
-        } else {
+        if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
             $this->arguments['fileExtension'] = 'webp';
-            $tag = $this->buildSingleTag('img', $this->arguments, $image);
-            $imageTag = $tag->render();
         }
+        $tag = $this->buildSingleTag('img', $this->arguments, $image);
+        $imageTag = $tag->render();
 
         // Add a webp source tag and activate nesting within a picture element only if no sources are set.
         if ($this->pictureConfiguration->webpShouldBeAddedBeforeSrcset()) {
@@ -172,11 +169,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 } else {
                     $imageSrc = $image;
                 }
-                // Build source tag if onlyWebp is not set
-                if (!$this->pictureConfiguration->webpShouldBeAddedOnly()) {
-                    $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
-                    $sourceOutputs[] = $tag->render();
+
+                // Force webp rendering if onlyWebp is set
+                if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
+                    $sourceConfiguration['fileExtension'] = 'webp';
                 }
+                $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
+                $sourceOutputs[] = $tag->render();
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = htmlspecialchars_decode($tag->getAttribute('type') ?? '');
