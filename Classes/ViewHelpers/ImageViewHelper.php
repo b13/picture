@@ -161,9 +161,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 // use src from sourceConfiguration, if set, otherwise use the main image
                 if ((string)($sourceConfiguration['src'] ?? '') !== '' || isset($sourceConfiguration['image'])) {
                     $imageSrc = $this->imageService->getImage(
-                        (string)$sourceConfiguration['src'],
-                        $sourceConfiguration['image'],
-                        (bool)$sourceConfiguration['treatIdAsReference']
+                        (string)($sourceConfiguration['src'] ?? ''),
+                        $sourceConfiguration['image'] ?? null,
+                        (bool)($sourceConfiguration['treatIdAsReference'] ?? false)
                     );
                 } else {
                     $imageSrc = $image;
@@ -231,7 +231,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     'minHeight' => null,
                     'maxWidth' => $useMaxWidth ? $srcsetWidth : null,
                     'maxHeight' => null,
-                    'crop' => $processingInstructions['crop'],
+                    'crop' => $processingInstructions['crop'] ?? null,
                 ];
                 if (!empty($configuration['fileExtension'] ?? '')) {
                     $srcsetProcessingInstructions['fileExtension'] = $configuration['fileExtension'];
@@ -437,12 +437,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $cropVariant = $configuration['cropVariant'] ?? $this->getImageCropVariant();
         $cropArea = $cropVariantCollection->getCropArea($cropVariant);
         $processingInstructions = [
-            'width' => $configuration['width'],
-            'height' => $configuration['height'],
-            'minWidth' => $configuration['minWidth'],
-            'minHeight' => $configuration['minHeight'],
-            'maxWidth' => $configuration['maxWidth'],
-            'maxHeight' => $configuration['maxHeight'],
+            'width' => $configuration['width'] ?? null,
+            'height' => $configuration['height'] ?? null,
+            'minWidth' => $configuration['minWidth'] ?? null,
+            'minHeight' => $configuration['minHeight'] ?? null,
+            'maxWidth' => $configuration['maxWidth'] ?? null,
+            'maxHeight' => $configuration['maxHeight'] ?? null,
             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image),
         ];
         if (!empty($configuration['fileExtension'] ?? '')) {

@@ -79,7 +79,7 @@ class PictureConfiguration
     {
         $configuration = [];
         foreach ($this->sources as $sourceType => $sourceAttributes) {
-            $configuration[$sourceType] = $this->arguments;
+            $configuration[$sourceType] = [];
             // At first check if given type exists in TypoScript settings and use the given media query.
             if ($this->breakPointsShouldBeAdded()) {
                 foreach ($this->getBreakPoints() as $breakpointName => $breakpointValue) {

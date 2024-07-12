@@ -277,6 +277,17 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString('Icons/Extension.svg" media="(min-width: 1024px)" />', $body);
     }
 
+    /**
+     * @test
+     */
+    public function imageWithSourceKeepsOriginalSource(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_source_keeps_original_source.csv');
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        self::assertStringContainsString('Test/Picture_alt.png" media="(min-width: 1024px)" />', $body);
+    }
+
     protected function anonymouseProcessdImage(string $content): string
     {
         $content = preg_replace('/Picture_[0-9a-z]+\./', 'Picture_xxx.', $content);
