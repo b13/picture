@@ -158,7 +158,6 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         if ($this->pictureConfiguration->sourcesShouldBeAdded()) {
             foreach ($this->pictureConfiguration->getSourceConfiguration() as $sourceConfiguration) {
                 $sourceOutputs = [];
-
                 // use src from sourceConfiguration, if set, otherwise use the main image
                 if ((string)($sourceConfiguration['src'] ?? '') !== '' || isset($sourceConfiguration['image'])) {
                     $imageSrc = $this->imageService->getImage(
@@ -171,7 +170,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 }
 
                 // Force webp rendering if onlyWebp is set
-                if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
+                if ($this->pictureConfiguration->webpShouldBeAddedOnly() && $imageSrc->getExtension() !== 'svg') {
                     $sourceConfiguration['fileExtension'] = 'webp';
                 }
                 $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
@@ -179,7 +178,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = htmlspecialchars_decode($tag->getAttribute('type') ?? '');
-                if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded()) {
+                if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded() && $imageSrc->getExtension() !== 'svg') {
                     $tag = $this->addWebpImage($sourceConfiguration, $imageSrc);
                     array_unshift($sourceOutputs, $tag->render());
                 }

@@ -261,6 +261,22 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
+    /**
+     * @test
+     */
+    public function svgAsSourceWithWebpDoNotAddWebp(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/svg_as_source_with_webp.csv');
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        // svg source not as webp (media="(min-width: 1024px)")
+        self::assertStringNotContainsString('.webp" media="(min-width: 1024px)" type="image/webp" />', $body);
+        // src as webp
+        self::assertStringContainsString('.webp" type="image/webp" />', $body);
+        // svg source as source
+        self::assertStringContainsString('Icons/Extension.svg" media="(min-width: 1024px)" />', $body);
+    }
+
     protected function anonymouseProcessdImage(string $content): string
     {
         $content = preg_replace('/Picture_[0-9a-z]+\./', 'Picture_xxx.', $content);
