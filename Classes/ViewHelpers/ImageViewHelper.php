@@ -158,20 +158,19 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         if ($this->pictureConfiguration->sourcesShouldBeAdded()) {
             foreach ($this->pictureConfiguration->getSourceConfiguration() as $sourceConfiguration) {
                 $sourceOutputs = [];
-
                 // use src from sourceConfiguration, if set, otherwise use the main image
                 if ((string)($sourceConfiguration['src'] ?? '') !== '' || isset($sourceConfiguration['image'])) {
                     $imageSrc = $this->imageService->getImage(
-                        (string)$sourceConfiguration['src'],
-                        $sourceConfiguration['image'],
-                        (bool)$sourceConfiguration['treatIdAsReference']
+                        (string)($sourceConfiguration['src'] ?? ''),
+                        $sourceConfiguration['image'] ?? null,
+                        (bool)($sourceConfiguration['treatIdAsReference'] ?? false)
                     );
                 } else {
                     $imageSrc = $image;
                 }
 
                 // Force webp rendering if onlyWebp is set
-                if ($this->pictureConfiguration->webpShouldBeAddedOnly()) {
+                if ($this->pictureConfiguration->webpShouldBeAddedOnly() && $imageSrc->getExtension() !== 'svg') {
                     $sourceConfiguration['fileExtension'] = 'webp';
                 }
                 $tag = $this->buildSingleTag('source', $sourceConfiguration, $imageSrc);
@@ -179,7 +178,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 
                 // Build additional source with type webp if attribute addWebp is set and previously build tag is not type of webp already.
                 $type = htmlspecialchars_decode($tag->getAttribute('type') ?? '');
-                if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded()) {
+                if ($type !== 'image/webp' && $this->pictureConfiguration->webpShouldBeAdded() && $imageSrc->getExtension() !== 'svg') {
                     $tag = $this->addWebpImage($sourceConfiguration, $imageSrc);
                     array_unshift($sourceOutputs, $tag->render());
                 }
@@ -232,7 +231,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     'minHeight' => null,
                     'maxWidth' => $useMaxWidth ? $srcsetWidth : null,
                     'maxHeight' => null,
-                    'crop' => $processingInstructions['crop'],
+                    'crop' => $processingInstructions['crop'] ?? null,
                 ];
                 if (!empty($configuration['fileExtension'] ?? '')) {
                     $srcsetProcessingInstructions['fileExtension'] = $configuration['fileExtension'];
@@ -438,12 +437,12 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $cropVariant = $configuration['cropVariant'] ?? $this->getImageCropVariant();
         $cropArea = $cropVariantCollection->getCropArea($cropVariant);
         $processingInstructions = [
-            'width' => $configuration['width'],
-            'height' => $configuration['height'],
-            'minWidth' => $configuration['minWidth'],
-            'minHeight' => $configuration['minHeight'],
-            'maxWidth' => $configuration['maxWidth'],
-            'maxHeight' => $configuration['maxHeight'],
+            'width' => $configuration['width'] ?? null,
+            'height' => $configuration['height'] ?? null,
+            'minWidth' => $configuration['minWidth'] ?? null,
+            'minHeight' => $configuration['minHeight'] ?? null,
+            'maxWidth' => $configuration['maxWidth'] ?? null,
+            'maxHeight' => $configuration['maxHeight'] ?? null,
             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image),
         ];
         if (!empty($configuration['fileExtension'] ?? '')) {
