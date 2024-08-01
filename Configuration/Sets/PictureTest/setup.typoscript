@@ -1,0 +1,27 @@
+plugin.tx_picture {
+  retina {
+    2 = 2x
+    3 = 3x
+  }
+
+  breakpoints {
+    sm = 640
+    md = 1024
+    lg = 1280
+  }
+}
+
+imagetest = PAGE
+imagetest {
+    typeNum = 1573387706874
+
+    10 = FLUIDTEMPLATE
+    10.file = EXT:picture/Resources/Private/Templates/Test.html
+
+    headerData.1573465962914 = TEXT
+    headerData.1573465962914.value (
+        <style>
+            code { display: block; margin: 1em 0; }
+        </style>
+    )
+}

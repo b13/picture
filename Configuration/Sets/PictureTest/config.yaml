@@ -1,0 +1,4 @@
+name: b13/picture/test
+label: Picture Test
+dependencies:
+  - b13/picture
