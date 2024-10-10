@@ -102,7 +102,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp
         $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
         $body = (string)$response->getBody();
         $expected = '<picture>
-<source type="image/webp" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp, /typo3temp/assets/_processed_/a/2/csm_Picture_089357224d.webp 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_d356d2dde1.webp 3x" type="image/webp" />
+<source type="image/webp" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp, /typo3temp/assets/_processed_/a/2/csm_Picture_089357224d.webp 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_d356d2dde1.webp 3x" />
 <img alt="Testimage 400px width with retina and addWebp option " src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
 </picture>';
         $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
@@ -187,7 +187,7 @@ width="400" height="200" loading="lazy" />';
         $body = (string)$response->getBody();
         $expected = '<picture class="myPictureClass">
 <source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_80498eb4cf.webp 800w, /typo3temp/assets/_processed_/a/2/csm_Picture_6546fe1853.webp 1200w, /typo3temp/assets/_processed_/a/2/csm_Picture_fffe3df9da.webp 1600w, /typo3temp/assets/_processed_/a/2/csm_Picture_0a9265a906.webp 2000w" media="(min-width: 1024px)" sizes="100vh" type="image/webp" />
-<source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_39487edcc6.png 800w, /typo3temp/assets/_processed_/a/2/csm_Picture_86fac4fe8a.png 1200w, /typo3temp/assets/_processed_/a/2/csm_Picture_a1c0b8cf78.png 1600w, /typo3temp/assets/_processed_/a/2/csm_Picture_fc98b213ea.png 2000w" media="(min-width: 1024px)" sizes="100vh" type="image/png" />
+<source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_39487edcc6.png 800w, /typo3temp/assets/_processed_/a/2/csm_Picture_86fac4fe8a.png 1200w, /typo3temp/assets/_processed_/a/2/csm_Picture_a1c0b8cf78.png 1600w, /typo3temp/assets/_processed_/a/2/csm_Picture_fc98b213ea.png 2000w" media="(min-width: 1024px)" sizes="100vh" />
 <source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_79ce5f6e5c.webp 310w, /typo3temp/assets/_processed_/a/2/csm_Picture_955087c064.webp 345w, /typo3temp/assets/_processed_/a/2/csm_Picture_881ba9c90f.webp 400w" sizes="100vh" type="image/webp" />
 <source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_724dd3b269.png 310w, /typo3temp/assets/_processed_/a/2/csm_Picture_6cab563075.png 345w, /typo3temp/assets/_processed_/a/2/csm_Picture_703de20dda.png 400w" sizes="100vh" type="image/png" />
 <source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp" type="image/webp" />
