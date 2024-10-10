@@ -325,8 +325,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 }
                 // add a type value if there potentially is more than one source with the same media/sizes value.
                 if (empty($configuration['media']) && empty($configuration['type'])) {
-                    $path_info = pathinfo($imageUri);
-                    $tag->addAttribute('type', 'image/' . $path_info['extension']);
+                    $tag->addAttribute('type', $processedImage->getOriginalFile()->getMimeType());
                 }
         }
 
