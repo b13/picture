@@ -251,7 +251,7 @@ width="400" height="200" loading="lazy" />';
         $body = (string)$response->getBody();
         $expected = '<picture class="myPictureClass">
 <source srcset="/typo3temp/assets/_processed_/a/1/csm_Picture_alt_4b5b9dd7fe.webp" media="(min-width: 1024px)" type="image/webp" />
-<source srcset="/typo3temp/assets/_processed_/a/1/csm_Picture_alt_b2b773d76f.png" media="(min-width: 1024px)" type="image/png" />
+<source srcset="/typo3temp/assets/_processed_/a/1/csm_Picture_alt_b2b773d76f.png" media="(min-width: 1024px)" />
 <source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_21770d9a15.webp" type="image/webp" />
 <source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_0d0101f0a6.png" type="image/png" />
 <source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_21770d9a15.webp" type="image/webp" />
