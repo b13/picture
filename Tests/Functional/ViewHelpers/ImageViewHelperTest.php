@@ -61,7 +61,7 @@ class ImageViewHelperTest extends FunctionalTestCase
         $this->assertProcessedFileExists(300, 300);
         $this->assertProcessedFileExists(1680, 1000);
         $this->assertProcessedFileExists(3360, 2000);
-        self::assertTrue(str_starts_with(trim($content), '<picture><source srcset='));
+        self::assertTrue(str_starts_with(trim($content), '<picture><source type="image/png" srcset='));
         self::assertTrue(str_contains(trim($content), '<img src='));
         self::assertTrue(!str_contains(trim($content), 'eID=dumpFile&amp;amp;'));
         self::assertTrue(str_contains(trim($content), 'eID=dumpFile&amp;t='));

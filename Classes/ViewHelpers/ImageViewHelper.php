@@ -323,6 +323,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 if (!empty($configuration['type'])) {
                     $tag->addAttribute('type', $configuration['type']);
                 }
+                // add a type value if there potentially is more than one source with the same media/sizes value.
+                if (empty($configuration['media']) && empty($configuration['type'])) {
+                    $tag->addAttribute('type', $processedImage->getOriginalFile()->getMimeType());
+                }
         }
 
         if ($this->pictureConfiguration->retinaShouldBeUsed()) {
