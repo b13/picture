@@ -61,6 +61,22 @@ class TagRenderingTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function simpleImageWithRetinaAndWebpAndSrcPrefixOption(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_retina_and_webp_and_src_prefix_option.csv');
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        $expected = '<picture>
+<source type="image/webp" data-srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp, /typo3temp/assets/_processed_/a/2/csm_Picture_089357224d.webp 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_d356d2dde1.webp 3x" />
+<img alt="Testimage 400px width with retina and addWebp and srcPrefix" data-src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" data-srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
+</picture>';
+        $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
+        self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
+    }
+
+    /**
+     * @test
+     */
     public function simpleImageWithRetinaOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_retina_option.csv');
@@ -74,6 +90,18 @@ height="200"
 loading="lazy" 
 srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />';
         $expected = implode(' ', GeneralUtility::trimExplode("\n", $expected));
+        self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
+    }
+
+    /**
+     * @test
+     */
+    public function simpleImageWithSrcPrefix(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_src_prefix.csv');
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        $expected = '<img alt="Testimage 400px width and srcPrefix" data-src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
