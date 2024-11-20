@@ -280,6 +280,15 @@ width="400" height="200" loading="lazy" />';
     /**
      * @test
      */
+    public function sourcesWithoutWidthTriggersNoWarning(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/sources_without_width.csv');
+        $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
+    }
+
+    /**
+     * @test
+     */
     public function imageWithSourceKeepsOriginalSource(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_source_keeps_original_source.csv');

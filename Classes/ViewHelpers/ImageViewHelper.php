@@ -225,8 +225,8 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 $srcsetWidth = $variant;
                 $srcsetHeight = ($ratio ? $variant * (1 / $ratio) : null);
                 $srcsetProcessingInstructions = [
-                    'width' => $useWidthHeight ? ($srcsetWidth . (strpos((string)$configuration['width'], 'c') ? 'c' : '')) : null,
-                    'height' => $useWidthHeight && $srcsetHeight ? ($srcsetHeight . (strpos((string)$configuration['height'], 'c') ? 'c' : '')) : null,
+                    'width' => $useWidthHeight ? ($srcsetWidth . (strpos((string)($configuration['width'] ?? ''), 'c') ? 'c' : '')) : null,
+                    'height' => $useWidthHeight && $srcsetHeight ? ($srcsetHeight . (strpos((string)($configuration['height'] ?? ''), 'c') ? 'c' : '')) : null,
                     'minWidth' => null,
                     'minHeight' => null,
                     'maxWidth' => $useMaxWidth ? $srcsetWidth : null,
