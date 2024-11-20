@@ -1,4 +1,4 @@
-![CI](https://github.com/b13/doktypemapper/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/b13/picture/actions/workflows/ci.yml/badge.svg)
 
 # b13 Image View Helper
 
