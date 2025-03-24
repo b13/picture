@@ -26,6 +26,7 @@ class PictureConfiguration
     protected array $breakpoints = [];
     protected array $sources = [];
     protected bool $addSources = false;
+    protected bool $addSrcPrefix = false;
     protected bool $addLazyLoading = false;
     protected string $lazyLoading = '';
     protected array $arguments;
@@ -35,6 +36,7 @@ class PictureConfiguration
     {
         $this->arguments = $arguments;
         $fileExtension = $arguments['fileExtension'] ?? $image->getExtension();
+        $this->addSrcPrefix = $arguments['srcPrefix'] ?? false;
         if ($image->getExtension() !== 'svg') {
             $this->addWebp = (bool)($fileExtension === 'webp' ? false : ($arguments['addWebp'] ?? $typoScriptSettings['addWebp'] ?? false));
             $this->onlyWebp = (bool)($fileExtension === 'webp' ? false : ($arguments['onlyWebp'] ?? $typoScriptSettings['onlyWebp'] ?? false));
@@ -96,6 +98,11 @@ class PictureConfiguration
             }
         }
         return $configuration;
+    }
+
+    public function srcPrefixShouldBeAdded(): bool
+    {
+        return $this->addSrcPrefix;
     }
 
     public function lazyLoadingShouldBeAdded(): bool
