@@ -383,6 +383,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             $tagValue = $imageUriRegular;
         }
 
+        // add "1x" for the default size
+        $tagValue .= ' 1x';
+
         foreach ($retinaSettings as $retinaMultiplyer => $retinaString) {
             // Set processing instructions.
             $retinaProcessingInstructions = $processingInstructions;
