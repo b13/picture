@@ -72,7 +72,7 @@ src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png"
 width="400"
 height="200"
 loading="lazy" 
-srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />';
+srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />';
         $expected = implode(' ', GeneralUtility::trimExplode("\n", $expected));
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
@@ -102,7 +102,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp
         $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
         $body = (string)$response->getBody();
         $expected = '<picture>
-<source type="image/webp" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp, /typo3temp/assets/_processed_/a/2/csm_Picture_089357224d.webp 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_d356d2dde1.webp 3x" />
+<source type="image/webp" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp 1x, /typo3temp/assets/_processed_/a/2/csm_Picture_089357224d.webp 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_d356d2dde1.webp 3x" />
 <img alt="Testimage 400px width with retina and addWebp option " src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
 </picture>';
         $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
@@ -135,9 +135,9 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp
         $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
         $body = (string)$response->getBody();
         $expected = '<picture>
-<source media="(min-width: 1024px)" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_30b88604ff.png, /typo3temp/assets/_processed_/a/2/csm_Picture_9939a0a20d.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_367bb79630.png 3x" />
-<source type="image/png" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
-<img alt="Testimage with 400px image size, 800px image size for screens &gt; 1024px, with retina" src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
+<source media="(min-width: 1024px)" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_30b88604ff.png 1x, /typo3temp/assets/_processed_/a/2/csm_Picture_9939a0a20d.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_367bb79630.png 3x" />
+<source type="image/png" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
+<img alt="Testimage with 400px image size, 800px image size for screens &gt; 1024px, with retina" src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
 </picture>';
         $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
