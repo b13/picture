@@ -103,7 +103,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3t
         $body = (string)$response->getBody();
         $expected = '<picture>
 <source type="image/webp" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_cfb567934c.webp 1x, /typo3temp/assets/_processed_/a/2/csm_Picture_089357224d.webp 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_d356d2dde1.webp 3x" />
-<img alt="Testimage 400px width with retina and addWebp option " src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
+<img alt="Testimage 400px width with retina and addWebp option " src="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png" width="400" height="200" loading="lazy" srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3temp/assets/_processed_/a/2/csm_Picture_13dd378eeb.png 2x, /typo3temp/assets/_processed_/a/2/csm_Picture_3c8b5cfedf.png 3x" />
 </picture>';
         $expected = implode('', GeneralUtility::trimExplode("\n", $expected));
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
