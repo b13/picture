@@ -32,15 +32,16 @@ Use a proper configured Fluid template adding the namespace when using this View
 
 See `EXT:picture/Configuration/TypoScript/setup.typoscript` for possible configuration options (key: `plugin.tx_picture`):
 
-| TypoScript Configuration option | Description |
-|---------------------------------|-------------|
-| addWebp | Add webp alternative image files as sources. <br>_default: 0_ |
-| onlyWebp | Enable only images in webp format and for all size variants. <br>_default: 0_ |
-| useRetina | Add retina (2x) version of all images as sizes variants. <br>_default: 0_ |
-| lossless | Enable lossless compression for webp images. <br>_default: 0_ |
-| retina | Use custom or multiple multipliers for calculating retina image variants. <br>_default: <br>retina.2 = 2x<br>Only works in combination with `useRetina = 1` |
-| breakpoints | Use named breakpoints for easier markup of different image sizes for one picture element.<br>_default: empty_. |
-| lazyLoading | Use the `loading` attribute with images. See [Browser Native Lazy Loading by Default](https://b13.com/blog/lazy-loading-just-got-lazier-in-typo3-v10)<br>_default: {$types.content.image.lazyLoading}_ |
+| TypoScript Configuration option | Description                                                                                                                                                                                            |
+|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| addWebp                         | Add webp alternative image files as sources. <br>_default: 0_                                                                                                                                          |
+| onlyWebp                        | Enable only images in webp format and for all size variants. <br>_default: 0_                                                                                                                          |
+| srcPrefix                       | Enable data-* prefix to all src and srcset. <br>_default: 0_                                                                                                                                           |
+| useRetina                       | Add retina (2x) version of all images as sizes variants. <br>_default: 0_                                                                                                                              |
+| lossless                        | Enable lossless compression for webp images. <br>_default: 0_                                                                                                                                          |
+| retina                          | Use custom or multiple multipliers for calculating retina image variants. <br>_default: <br>retina.2 = 2x<br>Only works in combination with `useRetina = 1`                                            |
+| breakpoints                     | Use named breakpoints for easier markup of different image sizes for one picture element.<br>_default: empty_.                                                                                         |
+| lazyLoading                     | Use the `loading` attribute with images. See [Browser Native Lazy Loading by Default](https://b13.com/blog/lazy-loading-just-got-lazier-in-typo3-v10)<br>_default: {$types.content.image.lazyLoading}_ |
 
 ## Attributes
 
@@ -66,6 +67,10 @@ This attribute is ignored if `onlyWebp` option is active.
 ### onlyWebp
 Enable only images in webp format and for all size variants.
 Enabling this option disables `addWebp` setting.
+
+### srcPrefix
+Enable `data-*` prefix to all `src` and `srcset` allowing to use all king do JS lazy load images libraries. Can be used 
+in cases when standard `loading="lazy"` is not enough.
 
 ### lossless
 Enable lossless compression for webp images. If you find your webp images lacking in quality compared to jpg/png images, enable
