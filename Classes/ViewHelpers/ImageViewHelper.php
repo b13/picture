@@ -501,7 +501,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         }
         /** @var FrontendTypoScript $typoScript */
         $typoScript = $request->getAttribute('frontend.typoscript');
-        $setup = $typoScript->getSetupArray();
+        if ($typoScript !== null) {
+            $setup = $typoScript->getSetupArray();
+        }
         $settings = $setup['plugin.']['tx_picture.'] ?? [];
         return $settings;
     }
