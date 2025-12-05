@@ -289,8 +289,8 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     $tag->addAttribute('loading', $this->pictureConfiguration->getLazyLoading());
                 }
 
-                $alt = $this->arguments['alt'] ?: $image->getProperty('alternative');
-                $title = $this->arguments['title'] ?: $image->getProperty('title');
+                $alt = $this->arguments['alt'] ?? $image->getProperty('alternative');
+                $title = $this->arguments['title'] ?? $image->getProperty('title');
 
                 // The alt-attribute is mandatory to have valid html-code, therefore add it even if it is empty
                 $tag->addAttribute('alt', $alt);
