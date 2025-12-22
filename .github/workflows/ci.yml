@@ -14,8 +14,10 @@ jobs:
     strategy:
       matrix:
         php: [ '8.3' ]
-        TYPO3: [ '11', '12' , '13', '14' ]
-
+        TYPO3: [ '11', '12' , '13' ]
+        include:
+            - php: '8.4'
+              TYPO3: '14'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
