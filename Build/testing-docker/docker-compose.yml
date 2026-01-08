@@ -1,4 +1,3 @@
-version: '2.3'
 services:
   chrome:
     image: selenium/standalone-chrome:91.0
@@ -82,8 +81,8 @@ services:
           set -x
         fi
         php -v | grep '^PHP';
-        if [ ${TYPO3} -eq 11 ]; then
-          composer require typo3/cms-fluid:^11.5 --dev -W --no-progress --no-interaction
+        if [ ${TYPO3} -eq 13 ]; then
+          composer require typo3/cms-fluid:^13.4 --dev -W --no-progress --no-interaction
         elif [ ${TYPO3} -eq 12 ]; then
           composer require typo3/cms-fluid:^12.4 --dev -W --no-progress --no-interaction
         else
@@ -179,8 +178,8 @@ services:
           set -x
         fi
         php -v | grep '^PHP';
-      if [ ${TYPO3} -eq 11 ]; then
-        php -dxdebug.mode=off .Build/bin/phpstan analyze -c Build/phpstan11.neon --no-progress --no-interaction
+      if [ ${TYPO3} -eq 14 ]; then
+        php -dxdebug.mode=off .Build/bin/phpstan analyze -c Build/phpstan14.neon --no-progress --no-interaction
       else
         php -dxdebug.mode=off .Build/bin/phpstan analyze -c Build/phpstan.neon --no-progress --no-interaction
       fi
