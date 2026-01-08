@@ -20,6 +20,8 @@ class TagRenderingTest extends FunctionalTestCase
 {
     protected array $pathsToLinkInTestInstance = ['typo3conf/ext/picture/Build/sites' => 'typo3conf/sites'];
     protected array $testExtensionsToLoad = ['typo3conf/ext/picture'];
+    // use this to run tests local if you have /usr/local/bin/gm
+    //protected array $configurationToUseInTestInstance = ['GFX' => ['processor_path' => '/usr/local/bin/']];
 
     /**
      * @test

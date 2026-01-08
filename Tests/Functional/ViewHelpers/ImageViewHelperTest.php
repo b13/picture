@@ -14,15 +14,21 @@ namespace B13\Picture\Tests\Functional\ViewHelpers;
 
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Type\File\ImageInfo;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
 class ImageViewHelperTest extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = ['typo3conf/ext/picture'];
     protected string $fileadmin = 'EXT:picture/Tests/Functional/ViewHelpers/Fixtures/fileadmin';
+    // use this to run tests local if you have /usr/local/bin/gm
+    //protected array $configurationToUseInTestInstance = ['GFX' => ['processor_path' => '/usr/local/bin/']];
 
     public function setUp(): void
     {
@@ -38,8 +44,7 @@ class ImageViewHelperTest extends FunctionalTestCase
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
         $template = __DIR__ . '/Fixtures/ImageWithSources.html';
-        $view = GeneralUtility::makeInstance(StandaloneView::class);
-        $view->setTemplatePathAndFilename($template);
+        $view = $this->getView($template);
         $content = $view->render();
         $this->assertProcessedFileExists(150, 150);
         $this->assertProcessedFileExists(1680, 1000);
@@ -54,8 +59,7 @@ class ImageViewHelperTest extends FunctionalTestCase
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
         $template = __DIR__ . '/Fixtures/ImageWithSourcesAndRetina.html';
-        $view = GeneralUtility::makeInstance(StandaloneView::class);
-        $view->setTemplatePathAndFilename($template);
+        $view = $this->getView($template);
         $content = $view->render();
         $this->assertProcessedFileExists(150, 150);
         $this->assertProcessedFileExists(300, 300);
@@ -74,12 +78,22 @@ class ImageViewHelperTest extends FunctionalTestCase
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
         $template = __DIR__ . '/Fixtures/SimpleImage.html';
-        $view = GeneralUtility::makeInstance(StandaloneView::class);
-        $view->setTemplatePathAndFilename($template);
+        $view = $this->getView($template);
         $content = $view->render();
         $this->assertProcessedFileExists(200, 100);
         self::assertTrue(!str_contains(trim($content), '<picture>'));
         self::assertTrue(str_starts_with(trim($content), '<img src='));
+    }
+
+    protected function getView(string $template): ViewInterface
+    {
+        if ((new Typo3Version())->getMajorVersion() < 13) {
+            $view = GeneralUtility::makeInstance(StandaloneView::class);
+            $view->setTemplatePathAndFilename($template);
+            return $view;
+        }
+        $viewFactory = GeneralUtility::makeInstance(ViewFactoryInterface::class);
+        return $viewFactory->create(new ViewFactoryData(null, null, null, $template));
     }
 
     protected function assertProcessedFileExists(int $width, int $height): void
