@@ -36,7 +36,7 @@ Options:
             - lint: PHP linting
             - unit (default): PHP unit tests
 
-    -t <10|11>
+    -t <12|13|14>
         Only with -s composerInstall|phpstan
         TYPO3 core major version the extension is embedded in for testing.
 
@@ -48,9 +48,9 @@ Options:
             - postgres: use postgres
             - sqlite: use sqlite
 
-    -p <7.2|7.3|7.4|8.0|8.1>
+    -p <8.1|8.2|8.3|8.4>
         Specifies the PHP minor version to be used
-            - 7.4 (default): use PHP 7.4
+            - 8.3 (default): use PHP 8.3
 
     -e "<phpunit or codeception options>"
         Only with -s acceptance|functional|unit

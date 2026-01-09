@@ -1,0 +1,26 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Access to property \\$tmpl on an unknown class TYPO3\\\\CMS\\\\Frontend\\\\Controller\\\\TypoScriptFrontendController\\.$#"
+			count: 1
+			path: ../Classes/ViewHelpers/ImageViewHelper.php
+
+		-
+			message: "#^Call to an undefined method B13\\\\Picture\\\\ViewHelpers\\\\ImageViewHelper\\:\\:registerTagAttribute\\(\\)\\.$#"
+			count: 6
+			path: ../Classes/ViewHelpers/ImageViewHelper.php
+
+		-
+			message: "#^Call to an undefined method B13\\\\Picture\\\\ViewHelpers\\\\ImageViewHelper\\:\\:registerUniversalTagAttributes\\(\\)\\.$#"
+			count: 1
+			path: ../Classes/ViewHelpers/ImageViewHelper.php
+
+		-
+			message: "#^Class TYPO3\\\\CMS\\\\Frontend\\\\Controller\\\\TypoScriptFrontendController not found\\.$#"
+			count: 2
+			path: ../Classes/ViewHelpers/ImageViewHelper.php
+
+		-
+			message: "#^Method B13\\\\Picture\\\\ViewHelpers\\\\ImageViewHelper\\:\\:getFrontendController\\(\\) has invalid return type TYPO3\\\\CMS\\\\Frontend\\\\Controller\\\\TypoScriptFrontendController\\.$#"
+			count: 1
+			path: ../Classes/ViewHelpers/ImageViewHelper.php
