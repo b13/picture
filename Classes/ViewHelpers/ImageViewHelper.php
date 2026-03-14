@@ -290,6 +290,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 if ($this->pictureConfiguration->lazyLoadingShouldBeAdded()) {
                     $tag->addAttribute('loading', $this->pictureConfiguration->getLazyLoading());
                 }
+                // override if set
+                if (isset($this->additionalArguments['loading'])) {
+                    $tag->addAttribute('loading', $this->additionalArguments['loading']);
+                }
 
                 if ((new Typo3Version())->getMajorVersion() < 14) {
                     $alt = $this->arguments['alt'] ?? $image->getProperty('alternative');
@@ -297,6 +301,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 } else {
                     $alt = (string)($this->additionalArguments['alt'] ?? $image->getProperty('alternative'));
                     $title = $this->additionalArguments['title'] ?? $image->getProperty('title');
+
+                    unset($this->additionalArguments['alt'], $this->additionalArguments['title']);
+                    $tag->addAttributes($this->additionalArguments);
                 }
 
                 // The alt-attribute is mandatory to have valid html-code, therefore add it even if it is empty
