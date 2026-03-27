@@ -115,6 +115,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             'array',
             'Array for rendering of multiple images.'
         );
+
+        $this->registerArgument(
+            'srcPrefix',
+            'bool',
+            'If true then adds data-* prefix to all src and srcset'
+        );
+
     }
 
     /**
@@ -263,6 +270,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         // set the default processed image (we might need the width and height of this image later on) and generate a single image uri as the src fallback
         $processedImage = $this->applyProcessingInstructions($processingInstructions, $image);
         $imageUri = $this->imageService->getImageUri($processedImage, $this->arguments['absolute']);
+        $srcPrefix = $this->getSrcPrefix();
 
         switch ($tagName) {
             case 'img':
@@ -275,9 +283,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     }
                 }
                 if ($srcsetValue !== '') {
-                    $tag->addAttribute('srcset', $srcsetValue);
+                    $tag->addAttribute($srcPrefix . 'srcset', $srcsetValue);
                 }
-                $tag->addAttribute('src', $imageUri);
+                $tag->addAttribute($srcPrefix . 'src', $imageUri);
                 if (!empty($configuration['sizes'])) {
                     $tag->addAttribute('sizes', $configuration['sizes']);
                 }
@@ -310,9 +318,9 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
 
                 // Add content of src attribute to srcset attribute as the source element has no src attribute.
                 if ($srcsetValue !== '') {
-                    $tag->addAttribute('srcset', $srcsetValue);
+                    $tag->addAttribute($srcPrefix . 'srcset', $srcsetValue);
                 } else {
-                    $tag->addAttribute('srcset', $imageUri);
+                    $tag->addAttribute($srcPrefix . 'srcset', $imageUri);
                 }
 
                 // Add attributes.
@@ -380,12 +388,13 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         // Process regular image.
         $processedImageRegular = $this->applyProcessingInstructions($processingInstructions, $image);
         $imageUriRegular = $this->imageService->getImageUri($processedImageRegular, $this->arguments['absolute']);
+        $srcPrefix = $this->getSrcPrefix();
 
         // Process additional retina images. Tag value can be gathered for source tags from srcset value as there it
         // was to be set already because adding retina is not mandatory.
-        if ($tag->hasAttribute('srcset')) {
-            $tagValue = htmlspecialchars_decode($tag->getAttribute('srcset') ?? '');
-            $tag->removeAttribute('srcset');
+        if ($tag->hasAttribute($srcPrefix . 'srcset')) {
+            $tagValue = htmlspecialchars_decode($tag->getAttribute($srcPrefix . 'srcset') ?? '');
+            $tag->removeAttribute($srcPrefix . 'srcset');
         } else {
             $tagValue = $imageUriRegular;
         }
@@ -415,7 +424,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             $tagValue .= ', ' . $imageUriRetina . ' ' . $retinaString;
         }
 
-        $tag->addAttribute('srcset', $tagValue);
+        $tag->addAttribute($srcPrefix . 'srcset', $tagValue);
     }
 
     /**
@@ -547,5 +556,10 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         }
 
         return $this->imageService->applyProcessingInstructions($image, $processingInstructions);
+    }
+
+    public function getSrcPrefix(): string
+    {
+        return $this->pictureConfiguration->srcPrefixShouldBeAdded() ? 'data-' : '';
     }
 }
