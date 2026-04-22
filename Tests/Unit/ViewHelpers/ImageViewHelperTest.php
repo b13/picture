@@ -13,15 +13,14 @@ namespace B13\Picture\Tests\Unit\ViewHelpers;
  */
 
 use B13\Picture\ViewHelpers\ImageViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Imaging\ImageManipulation\CropVariantCollection;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class ImageViewHelperTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getProcessingInstructionsUseCropVariantFromConfigurationIfSet(): void
     {
         $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))
@@ -45,9 +44,7 @@ class ImageViewHelperTest extends UnitTestCase
         $imageViewHelper->_call('getProcessingInstructions', $configuration, $image);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getProcessingInstructionsCallsGetImageCropVariantIfNotConfigured(): void
     {
         $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))
@@ -70,9 +67,7 @@ class ImageViewHelperTest extends UnitTestCase
         $imageViewHelper->_call('getProcessingInstructions', $configuration, $image);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getImageCropVariantReturnsCropVariantFromArguments(): void
     {
         $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))
@@ -84,9 +79,7 @@ class ImageViewHelperTest extends UnitTestCase
         self::assertSame('bar', $cropVariant);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getImageCropVariantReturnsDefaultIfNotSet(): void
     {
         $imageViewHelper = $this->getMockBuilder($this->buildAccessibleProxy(ImageViewHelper::class))

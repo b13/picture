@@ -1,18 +1,23 @@
 {
   "name": "b13/picture",
   "type": "typo3-cms-extension",
-  "description": "Improved TYPO3 image ViewHelper creating picture elements with support for sizes, sources, additional image formats, etc.",
+  "description": "Picture: Extended Image ViewHelper - Improved TYPO3 image ViewHelper creating picture elements with support for sizes, sources, additional image formats, etc.",
   "license": ["GPL-2.0-or-later"],
   "extra": {
     "typo3/cms": {
       "extension-key": "picture",
-        "cms-package-dir": "{$vendor-dir}/typo3/cms",
-        "app-dir": ".Build",
-        "web-dir": ".Build/Web"
+      "cms-package-dir": "{$vendor-dir}/typo3/cms",
+      "app-dir": ".Build",
+      "web-dir": ".Build/Web",
+      "version": "3.0.4",
+      "Package": {
+        "providesPackages": {}
+      }
     }
   },
   "require": {
-    "typo3/cms-fluid": "^11.5 || ^12.4 || ^13.4 || ^14.0"
+    "php": "^8.3",
+    "typo3/cms-fluid": "^12.4 || ^13.4 || ^14.3"
   },
   "autoload": {
     "psr-4": {
@@ -20,12 +25,11 @@
     }
   },
   "require-dev": {
-    "typo3/cms-fluid": "^11.5 || ^12.4 || ^13.4 || ^14.0",
+    "typo3/cms-fluid": "^12.4 || ^13.4 || ^14.3",
     "phpstan/phpstan": "^1.10",
     "typo3/coding-standards": "^0.5.5",
     "typo3/tailor": "^1.1",
-    "typo3/testing-framework": "^7.1.1 || ^8.2.7 || ^9.1",
-    "phpunit/phpunit": "9.6 || ^10.5 || ^11.3"
+    "typo3/testing-framework": "^8.3 || ^9.5"
   },
   "config": {
     "vendor-dir": ".Build/vendor",

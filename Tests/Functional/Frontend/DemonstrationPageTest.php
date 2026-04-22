@@ -12,6 +12,7 @@ namespace B13\Picture\Tests\Functional\Frontend;
  * of the License, or any later version.
  */
 
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
@@ -20,9 +21,7 @@ class DemonstrationPageTest extends FunctionalTestCase
     protected array $pathsToLinkInTestInstance = ['typo3conf/ext/picture/Build/sites' => 'typo3conf/sites'];
     protected array $testExtensionsToLoad = ['typo3conf/ext/picture'];
 
-    /**
-     * @test
-     */
+    #[Test]
     public function callingPageReturns200ResponseCode(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/demonstration_page.csv');
