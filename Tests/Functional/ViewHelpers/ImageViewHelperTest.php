@@ -12,8 +12,11 @@ namespace B13\Picture\Tests\Functional\ViewHelpers;
  * of the License, or any later version.
  */
 
+use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Type\File\ImageInfo;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -37,9 +40,7 @@ class ImageViewHelperTest extends FunctionalTestCase
         $GLOBALS['BE_USER'] = $this->setUpBackendUser(1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithSources(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
@@ -52,9 +53,7 @@ class ImageViewHelperTest extends FunctionalTestCase
         self::assertTrue(str_contains(trim($content), '<img src='));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithSourcesAndRetina(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
@@ -71,9 +70,7 @@ class ImageViewHelperTest extends FunctionalTestCase
         self::assertTrue(str_contains(trim($content), 'eID=dumpFile&amp;t='));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleImage(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/storage_with_file.csv');
@@ -92,6 +89,9 @@ class ImageViewHelperTest extends FunctionalTestCase
             $view->setTemplatePathAndFilename($template);
             return $view;
         }
+        $request = GeneralUtility::makeInstance(ServerRequest::class);
+        $request = $request->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+        $GLOBALS['TYPO3_REQUEST'] = $request;
         $viewFactory = GeneralUtility::makeInstance(ViewFactoryInterface::class);
         return $viewFactory->create(new ViewFactoryData(null, null, null, $template));
     }

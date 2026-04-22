@@ -12,6 +12,7 @@ namespace B13\Picture\Tests\Functional\Frontend;
  * of the License, or any later version.
  */
 
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -23,9 +24,7 @@ class TagRenderingTest extends FunctionalTestCase
     // use this to run tests local if you have /usr/local/bin/gm
     //protected array $configurationToUseInTestInstance = ['GFX' => ['processor_path' => '/usr/local/bin/']];
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleImage(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image.csv');
@@ -35,9 +34,7 @@ class TagRenderingTest extends FunctionalTestCase
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleImageAsWebp(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_as_webp.csv');
@@ -47,9 +44,7 @@ class TagRenderingTest extends FunctionalTestCase
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleImageWithOnlyWebp(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_only_webp_option.csv');
@@ -60,9 +55,7 @@ class TagRenderingTest extends FunctionalTestCase
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleImageWithRetinaOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_retina_option.csv');
@@ -79,9 +72,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3t
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleImageWithWebpOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_webp_option.csv');
@@ -95,9 +86,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3t
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleImageWithRetinaAndWebpOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/simple_image_with_retina_and_webp_option.csv');
@@ -111,9 +100,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3t
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithMultipleSizes(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_multiple_sizes.csv');
@@ -128,9 +115,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3t
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithTwoSizesAndRetinaOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_two_sizes_and_retina_option.csv');
@@ -145,9 +130,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3t
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singleImageWithMultipleImageSizesAndTwoBreakpoints(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/single_image_with_multiple_image_sizes_and_two_breakpoints.csv');
@@ -161,9 +144,7 @@ srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_23f7889ff5.png 1x, /typo3t
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singleImageWithMultipleImageSizesAsSrcset(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/single_image_with_multiple_image_sizes_as_srcset.csv');
@@ -179,9 +160,7 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithSrcsetAndASizesValueWithWebpOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_srcset_and_a_sizes_value_with_webp_option.csv');
@@ -199,9 +178,7 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithThreeSizesForThreeGivenBreakpoints(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_three_sizes_for_three_given_breakpoints.csv');
@@ -217,9 +194,7 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithPictureClassRenderPictureTag(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_picture_class.csv');
@@ -243,9 +218,7 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithMultipleSourcesWithWebPOption(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_multiple_sources_with_webp_option.csv');
@@ -263,9 +236,7 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function svgAsSourceWithWebpDoNotAddWebp(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/svg_as_source_with_webp.csv');
@@ -279,18 +250,14 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString('Icons/Extension.svg" media="(min-width: 1024px)" />', $body);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sourcesWithoutWidthTriggersNoWarning(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/sources_without_width.csv');
         $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function imageWithSourceKeepsOriginalSource(): void
     {
         $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_source_keeps_original_source.csv');
