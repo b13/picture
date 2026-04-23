@@ -41,7 +41,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        if ((new Typo3Version())->getMajorVersion() < 14) {
+        if ((new Typo3Version())->getMajorVersion() < 13) {
             $this->registerUniversalTagAttributes();
             // attributes from fluid VH
             $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', false);
@@ -291,7 +291,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     $tag->addAttribute('loading', $this->pictureConfiguration->getLazyLoading());
                 }
 
-                if ((new Typo3Version())->getMajorVersion() < 14) {
+                if ((new Typo3Version())->getMajorVersion() < 13) {
                     $alt = $this->arguments['alt'] ?? $image->getProperty('alternative');
                     $title = $this->arguments['title'] ?? $image->getProperty('title');
                 } else {

@@ -10,7 +10,7 @@
     stopOnSkipped="false"
     beStrictAboutTestsThatDoNotTestAnything="false"
     failOnWarning="true"
-    failOnDeprecation="false"
+    failOnDeprecation="true"
 >
     <testsuites>
         <testsuite name="Functional tests">
