@@ -9,7 +9,7 @@
       "cms-package-dir": "{$vendor-dir}/typo3/cms",
       "app-dir": ".Build",
       "web-dir": ".Build/Web",
-      "version": "3.0.4",
+      "version": "4.0.0",
       "Package": {
         "providesPackages": {}
       }
