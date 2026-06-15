@@ -83,8 +83,6 @@ services:
         php -v | grep '^PHP';
         if [ ${TYPO3} -eq 13 ]; then
           composer require typo3/cms-fluid:^13.4 --dev -W --no-progress --no-interaction
-        elif [ ${TYPO3} -eq 12 ]; then
-          composer require typo3/cms-fluid:^12.4 --dev -W --no-progress --no-interaction
         else
           composer install --dev --no-progress --no-interaction
         fi
