@@ -36,7 +36,7 @@ Options:
             - lint: PHP linting
             - unit (default): PHP unit tests
 
-    -t <12|13|14>
+    -t <13|14>
         Only with -s composerInstall|phpstan
         TYPO3 core major version the extension is embedded in for testing.
 
