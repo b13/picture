@@ -282,4 +282,14 @@ width="400" height="200" loading="lazy" />';
         $content = preg_replace('/Picture_alt_[0-9a-z]+\./', 'Picture_alt_xxx.', $content);
         return $content;
     }
+
+    #[Test]
+    public function imageWithLoadingAttributeKeepsLoadingAttribute(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/image_with_loading_tag.csv');
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        $expected = 'loading="eager"';
+        self::assertStringContainsString($this->anonymouseProcessdImage($expected), $this->anonymouseProcessdImage($body));
+    }
 }
