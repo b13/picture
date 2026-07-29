@@ -336,7 +336,11 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 }
         }
 
-        if ($this->pictureConfiguration->retinaShouldBeUsed()) {
+        // Do not add retina (density) descriptors when a variants-based srcset
+        // with width descriptors was already built, as mixing "w" and "x"
+        // descriptors within a single srcset is invalid. With width descriptors
+        // the browser already selects the best image for high-DPI displays.
+        if ($this->pictureConfiguration->retinaShouldBeUsed() && $srcsetValue === '') {
             $this->addRetina($processingInstructions, $tag, $image);
         }
         return $tag;

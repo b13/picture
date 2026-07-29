@@ -276,6 +276,21 @@ width="400" height="200" loading="lazy" />';
         self::assertStringContainsString('Test/Picture_alt.png" media="(min-width: 1024px)" />', $body);
     }
 
+    #[Test]
+    public function sourceWithVariantsAndRetinaDoesNotMixDescriptors(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/Fixtures/source_with_variants_and_retina.csv');
+        $response = $this->executeFrontendSubRequest(new InternalRequest('http://localhost/'));
+        $body = (string)$response->getBody();
+        // In a source with variants the srcset must use width descriptors only;
+        // density (retina) descriptors must not be mixed in as that would be
+        // invalid HTML (see issue #82). The srcset ends right after "768w",
+        // immediately followed by the media attribute, proving no "1x"/"2x"
+        // density descriptors were appended.
+        $expectedSource = '<source srcset="/typo3temp/assets/_processed_/a/2/csm_Picture_xxx.png 400w, /typo3temp/assets/_processed_/a/2/csm_Picture_xxx.png 768w" media="(max-width: 768px)" sizes="100vw" />';
+        self::assertStringContainsString($expectedSource, $this->anonymouseProcessdImage($body));
+    }
+
     protected function anonymouseProcessdImage(string $content): string
     {
         $content = preg_replace('/Picture_[0-9a-z]+\./', 'Picture_xxx.', $content);
