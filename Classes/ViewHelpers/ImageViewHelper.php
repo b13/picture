@@ -287,7 +287,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                 if (!empty($this->arguments['class'] ?? null)) {
                     $tag->addAttribute('class', $this->arguments['class']);
                 }
-                if ($this->pictureConfiguration->lazyLoadingShouldBeAdded()) {
+                if ($this->pictureConfiguration->lazyLoadingShouldBeAdded() && !$tag->hasAttribute('loading')) {
                     $tag->addAttribute('loading', $this->pictureConfiguration->getLazyLoading());
                 }
 
