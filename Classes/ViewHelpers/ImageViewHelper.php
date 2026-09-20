@@ -222,6 +222,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
             }
             $useWidthHeight = $ratio !== null || empty($configuration['maxWidth']);
             $useMaxWidth = !empty($configuration['maxWidth']);
+            $renderedWidths = [];
             foreach ($variants as $variant) {
                 // build processing instructions for each srcset variant
                 $srcsetWidth = $variant;
@@ -239,8 +240,15 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
                     $srcsetProcessingInstructions['fileExtension'] = $configuration['fileExtension'];
                 }
                 $srcsetImage = $this->applyProcessingInstructions($srcsetProcessingInstructions, $image);
+                // the processor may return a narrower image than requested, e.g. without upscaling
+                $renderedWidth = (int)$srcsetImage->getProperty('width') ?: $srcsetWidth;
+                // a repeated width descriptor is a parse error
+                if (in_array($renderedWidth, $renderedWidths, true)) {
+                    continue;
+                }
+                $renderedWidths[] = $renderedWidth;
                 $srcsetValue .= ($srcsetValue ? ', ' : '');
-                $srcsetValue .= $this->imageService->getImageUri($srcsetImage, $this->arguments['absolute']) . ' ' . $srcsetWidth . 'w';
+                $srcsetValue .= $this->imageService->getImageUri($srcsetImage, $this->arguments['absolute']) . ' ' . $renderedWidth . 'w';
             }
         }
         return $srcsetValue;
